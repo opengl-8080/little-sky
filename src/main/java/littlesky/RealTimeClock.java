@@ -1,31 +1,25 @@
 package littlesky;
 
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class RealTimeClock implements Clock {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-    
-    private ReadOnlyStringWrapper text = new ReadOnlyStringWrapper();
-    private List<Consumer<LocalTime>> tasks = new ArrayList<>();
-    
-    @Override
-    public void addTask(Consumer<LocalTime> task) {
-        this.tasks.add(task);
-    }
 
-    @Override
+    private final ReadOnlyObjectWrapper<LocalDate> date = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<LocalTime> time = new ReadOnlyObjectWrapper<>();
+    
+    public RealTimeClock() {
+        this.updateDateTime();
+    }
+    
     public void start() {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor((runnable) -> {
             Thread thread = new Thread(runnable);
@@ -33,23 +27,24 @@ public class RealTimeClock implements Clock {
             return thread;
         });
         
-        executor.scheduleAtFixedRate(this::tick, 0, 500, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(() -> {
+            Platform.runLater(this::updateDateTime);
+        }, 0, 500, TimeUnit.MILLISECONDS);
     }
     
-    private void tick() {
-        Platform.runLater(() -> {
-            LocalTime now = this.now();
-            this.text.setValue(now.format(formatter));
-            this.tasks.forEach(task -> task.accept(now));
-        });
-    }
-    
-    protected LocalTime now() {
-        return LocalTime.now();
+    private void updateDateTime() {
+        LocalDateTime now = LocalDateTime.now();
+        this.date.set(now.toLocalDate());
+        this.time.set(now.toLocalTime());
     }
 
     @Override
-    public ReadOnlyStringProperty textProperty() {
-        return this.text.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<LocalDate> dateProperty() {
+        return this.date.getReadOnlyProperty();
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<LocalTime> timeProperty() {
+        return this.time.getReadOnlyProperty();
     }
 }

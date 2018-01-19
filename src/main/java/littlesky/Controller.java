@@ -1,17 +1,15 @@
 package littlesky;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -19,48 +17,28 @@ public class Controller implements Initializable {
     private Stage primaryStage;
     private double mouseOffsetX;
     private double mouseOffsetY;
-    private Clock clock;
+    private DebugDialog debugDialog = new DebugDialog();
+    private RealTimeClock realTimeClock;
     
+    @FXML
+    private CheckMenuItem alwaysOnTopMenuItem;
     @FXML
     private Label timeLabel;
     @FXML
     private HBox hBox;
-    
-    @FXML
-    private ComboBox<Integer> hourComboBox;
-    @FXML
-    private ComboBox<Integer> minuteComboBox;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resources) {
-//        LocalTime now = LocalTime.now();
-//        for (int i=0; i<24; i++) {
-//            this.hourComboBox.getItems().add(i);
-//        }
-//        this.hourComboBox.setValue(now.getHour());
-//        for (int i=0; i<60; i++) {
-//            this.minuteComboBox.getItems().add(i);
-//        }
-//        this.minuteComboBox.setValue(now.getMinute());
-//        
-//        this.clock = new DummyClock(() -> {
-//            int hour = this.hourComboBox.getValue();
-//            int minute = this.minuteComboBox.getValue();
-//            return LocalTime.of(hour, minute);
-//        });
-        this.clock = new RealTimeClock();
-        
-        this.timeLabel.textProperty().bind(this.clock.textProperty());
-        this.clock.start();
-
-        SunriseSunsetTime sunriseSunsetTime = new SunriseSunsetTime(JapaneseCity.OSAKA, LocalDate.now());
-        SkyColor skyColor = new SkyColor(sunriseSunsetTime);
-        this.clock.addTask(skyColor::tick);
-        
-        this.hBox.backgroundProperty().bind(skyColor.backgroundProperty());
+        this.realTimeClock = new RealTimeClock();
+        this.replaceClock(this.realTimeClock);
+        this.realTimeClock.start();
     }
     
+    private void replaceClock(Clock newClock) {
+        this.timeLabel.textProperty().bind(new TimeFormatBinder("HH:mm:ss", newClock.timeProperty()));
+        SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, newClock);
+        this.hBox.backgroundProperty().bind(skyColor.backgroundProperty());
+    }
     
     @FXML
     public void onMousePressed(MouseEvent event) {
@@ -76,5 +54,23 @@ public class Controller implements Initializable {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        this.debugDialog.initOwner(primaryStage);
+    }
+    
+    @FXML
+    public void close() {
+        Platform.exit();
+    }
+    
+    @FXML
+    public void openDebug() {
+        this.replaceClock(this.debugDialog.getDebugClock());
+        this.debugDialog.show();
+        this.replaceClock(this.realTimeClock);
+    }
+    
+    @FXML
+    public void changeAlwaysOnTop() {
+        this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
     }
 }

@@ -5,8 +5,6 @@ import com.luckycatlabs.sunrisesunset.dto.Location;
 import java.util.TimeZone;
 
 /**
- * 日本国内の都市
- * <p>
  * <a href="http://eco.mtk.nao.ac.jp/koyomi/dni/">各地のこよみ</a>
  */
 public enum JapaneseCity implements City {

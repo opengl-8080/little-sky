@@ -1,15 +1,12 @@
 package littlesky;
 
-import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.function.Consumer;
 
 public interface Clock {
 
-    void addTask(Consumer<LocalTime> task);
-
-    void start();
-
-    ReadOnlyStringProperty textProperty();
+    ReadOnlyObjectProperty<LocalDate> dateProperty();
+    ReadOnlyObjectProperty<LocalTime> timeProperty();
 }

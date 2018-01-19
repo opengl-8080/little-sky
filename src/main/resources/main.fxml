@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 
-<VBox xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.Controller">
+<HBox fx:id="hBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" prefHeight="63.0" prefWidth="222.0" style="-fx-border-color: #DDD #AAA #555 #AAA; -fx-border-width: 3; -fx-border-radius: 10;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.Controller">
    <children>
-      <HBox fx:id="hBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" prefHeight="63.0" prefWidth="222.0">
-         <children>
-            <Label fx:id="timeLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font name="SansSerif Bold" size="20.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-      <HBox VBox.vgrow="ALWAYS">
-         <children>
-            <ComboBox fx:id="hourComboBox" maxWidth="1.7976931348623157E308" promptText="時間" />
-            <ComboBox fx:id="minuteComboBox" maxWidth="1.7976931348623157E308" promptText="分" />
-         </children>
-      </HBox>
+      <Label fx:id="timeLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" HBox.hgrow="ALWAYS">
+         <font>
+            <Font name="SansSerif Bold" size="20.0" />
+         </font>
+         <contextMenu>
+            <ContextMenu>
+              <items>
+                  <CheckMenuItem fx:id="alwaysOnTopMenuItem" mnemonicParsing="false" onAction="#changeAlwaysOnTop" text="Always on top" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#openDebug" text="Debug" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
+              </items>
+            </ContextMenu>
+         </contextMenu>
+      </Label>
    </children>
-</VBox>
+</HBox>
