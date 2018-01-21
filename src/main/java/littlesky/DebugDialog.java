@@ -38,6 +38,6 @@ public class DebugDialog {
     }
 
     public Clock getDebugClock() {
-        return this.controller;
+        return this.controller.getClock();
     }
 }

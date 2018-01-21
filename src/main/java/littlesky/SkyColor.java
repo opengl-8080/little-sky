@@ -1,37 +1,35 @@
 package littlesky;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static littlesky.BindingBuilder.*;
+
 public class SkyColor {
     
-    private SkyColorGradation gradation;
-    private final ReadOnlyObjectWrapper<Background> background = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<Color> color = new ReadOnlyObjectWrapper<>();
+    private final ObjectProperty<SkyColorGradation> gradationProperty = new SimpleObjectProperty<>(new SkyColorGradation());
     
     public SkyColor(City city, Clock clock) {
-        clock.dateProperty().addListener((value, oldDate, newDate) -> {
-            this.updateGradation(city, newDate);
-            this.updateBackgroundColor(clock.timeProperty().get());
-        });
-
-        clock.timeProperty().addListener((value, oldTime, newTime) -> {
-            this.updateBackgroundColor(newTime);
-        });
+        this.gradationProperty.bind(
+            binding(clock.dateProperty())
+            .computeValue(() -> createGradation(city, clock.getDate()))
+        );
         
-        this.updateGradation(city, clock.dateProperty().get());
-        this.updateBackgroundColor(clock.timeProperty().get());
+        this.color.bind(
+            binding(clock.timeProperty())
+            .computeValue(() -> this.gradationProperty.get().at(clock.getTime()))
+        );
     }
-    
-    private void updateGradation(City city, LocalDate date) {
+
+    private SkyColorGradation createGradation(City city, LocalDate date) {
         SunriseSunsetTime sunriseSunsetTime = new SunriseSunsetTime(city, date);
         LocalTime sunriseTime = sunriseSunsetTime.sunriseTime();
         LocalTime sunsetTime = sunriseSunsetTime.sunsetTime();
@@ -41,8 +39,9 @@ public class SkyColor {
         Duration noonDuration = sunriseDuration.plus(sunsetDuration).dividedBy(2L);
         LocalTime noonTime = LocalTime.MIN.plus(noonDuration);
 
-        this.gradation = new SkyColorGradation();
-        this.gradation
+        SkyColorGradation gradation = new SkyColorGradation();
+        
+        gradation
                 .addKeyFrame(sunriseTime.minusMinutes(120), Color.web("#111111"))
                 .addKeyFrame(sunriseTime.minusMinutes(90), Color.web("#4d548a"))
                 .addKeyFrame(sunriseTime.minusMinutes(60), Color.web("#c486b1"))
@@ -56,19 +55,19 @@ public class SkyColor {
                 .addKeyFrame(sunsetTime, Color.web("#100028"))
                 .addKeyFrame(sunsetTime.plusMinutes(30), Color.web("#111111"))
         ;
+        
+        return gradation;
     }
-    
-    private void updateBackgroundColor(LocalTime time) {
-        Color color = this.gradation.at(time);
-        this.color.set(color);
-        this.background.set(new Background(new BackgroundFill(color, new CornerRadii(10.0), null)));
-    }
-    
-    public ReadOnlyObjectProperty<Background> backgroundProperty() {
-        return this.background.getReadOnlyProperty();
+
+    public ReadOnlyObjectProperty<Color> colorProperty() {
+        return this.color.getReadOnlyProperty();
     }
 
     public Color getColor() {
         return this.color.get();
+    }
+    
+    public double getBrightness() {
+        return this.getColor().getBrightness();
     }
 }

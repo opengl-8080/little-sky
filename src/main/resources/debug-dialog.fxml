@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
@@ -35,6 +36,10 @@
          </children>
       </HBox>
       <Slider fx:id="timeSlider" blockIncrement="0.1" majorTickUnit="1.0" max="1.0" minorTickCount="11" showTickLabels="true" showTickMarks="true" />
-      <HBox fx:id="skyColorSimulationHBox" minHeight="50.0" />
+      <HBox fx:id="skyColorSimulationHBox" minHeight="50.0">
+         <padding>
+            <Insets left="5.0" right="5.0" />
+         </padding>
+      </HBox>
    </children>
 </VBox>

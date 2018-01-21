@@ -1,9 +1,7 @@
 package littlesky;
 
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
@@ -23,7 +21,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-public class DebugDialogController implements Initializable, Clock {
+import static littlesky.BindingBuilder.*;
+
+public class DebugDialogController implements Initializable {
     @FXML
     private DatePicker datePicker;
     @FXML
@@ -32,58 +32,60 @@ public class DebugDialogController implements Initializable, Clock {
     private Label timeLabel;
     @FXML
     private HBox skyColorSimulationHBox;
-    
-    private ReadOnlyObjectWrapper<LocalDate> date = new ReadOnlyObjectWrapper<>();
-    private ReadOnlyObjectWrapper<LocalTime> time = new ReadOnlyObjectWrapper<>();
 
+    private static final DateTimeFormatter sliderLabelFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    private static final TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
+    
+    private final DebugClock debugClock = new DebugClock();
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        TimeSliderConverter converter = new TimeSliderConverter();
         this.datePicker.setValue(LocalDate.now());
-        this.date.bind(this.datePicker.valueProperty());
         
-        this.timeSlider.setLabelFormatter(converter);
-        this.time.bind(new ObjectBinding<LocalTime>() {
-            {super.bind(timeSlider.valueProperty());}
-            
-            @Override
-            protected LocalTime computeValue() {
-                double rate = timeSlider.getValue();
-                String timeText = converter.toString(rate);
-                return LocalTime.parse(timeText, timeFormatter);
-            }
-        });
+        this.timeSlider.setLabelFormatter(timeSliderConverter);
+        this.timeSlider.setValue(this.toSliderValue(LocalTime.now()));
         
-        this.timeLabel.textProperty().bind(new StringBinding() {
-            {super.bind(timeSlider.valueProperty());}
-            
-            @Override
-            protected String computeValue() {
-                return converter.toString(timeSlider.getValue());
-            }
-        });
+        this.timeLabel.textProperty().bind(
+            binding(this.timeSlider.valueProperty()).computeValue(this::getTimeLabelFromTimeSlider)
+        );
 
-        String now = LocalTime.now().format(timeFormatter);
-        Double rate = converter.fromString(now);
-        this.timeSlider.setValue(rate);
+        this.debugClock.bindTime(
+            binding(this.timeSlider.valueProperty()).computeValue(this::getLocalTimeFromTimeSlider)
+        );
 
-        this.date.addListener((value, oldValue, newDate) -> {
+        this.debugClock.bindDate(this.datePicker.valueProperty());
+        this.debugClock.dateProperty().addListener((value, oldValue, newDate) -> {
             this.simulateSkyColor();
         });
+        
         this.simulateSkyColor();
+    }
+    
+    private Double toSliderValue(LocalTime time) {
+        String now = time.format(sliderLabelFormatter);
+        return timeSliderConverter.fromString(now);
+    }
+
+    private LocalTime getLocalTimeFromTimeSlider() {
+        double rate = this.timeSlider.getValue();
+        String timeText = timeSliderConverter.toString(rate);
+        return LocalTime.parse(timeText, sliderLabelFormatter);
+    }
+
+    private String getTimeLabelFromTimeSlider() {
+        return timeSliderConverter.toString(timeSlider.getValue());
     }
     
     private void simulateSkyColor() {
         this.skyColorSimulationHBox.getChildren().clear();
         
-        SimulationClock simulationClock = new SimulationClock(this.date.get(), LocalTime.MIN);
+        SimulationClock simulationClock = new SimulationClock(this.debugClock.getDate(), LocalTime.MIN);
         SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, simulationClock);
         
         LocalTime time = LocalTime.MIN;
         while (time.equals(LocalTime.MAX) || time.isBefore(LocalTime.MAX)) {
             simulationClock.update(time);
-            
+
             Pane pane = this.createSimulatedColorBlock(skyColor.getColor());
             this.skyColorSimulationHBox.getChildren().add(pane);
 
@@ -101,19 +103,36 @@ public class DebugDialogController implements Initializable, Clock {
         return pane;
     }
 
-    @Override
-    public ReadOnlyObjectProperty<LocalDate> dateProperty() {
-        return this.date.getReadOnlyProperty();
+    public Clock getClock() {
+        return this.debugClock;
     }
+    
+    private static class DebugClock extends ClockBase {
+        
+        private void bindTime(ObjectBinding<LocalTime> binding) {
+            this.time.bind(binding);
+        }
+        
+        private void bindDate(ObjectProperty<LocalDate> binding) {
+            this.date.bind(binding);
+        }
+    }
+    
+    private static class SimulationClock extends ClockBase {
 
-    @Override
-    public ReadOnlyObjectProperty<LocalTime> timeProperty() {
-        return this.time.getReadOnlyProperty();
+        private SimulationClock(LocalDate date, LocalTime time) {
+            this.date.set(date);
+            this.time.set(time);
+        }
+        
+        private void update(LocalTime time) {
+            this.time.set(time);
+        }
     }
 
     private static class TimeSliderConverter extends StringConverter<Double> {
         private static final long TOTAL_MINUTES = 60 * 23 + 59;
-        
+
         @Override
         public String toString(Double rate) {
             long minutes = (long)(TOTAL_MINUTES * rate);
@@ -131,31 +150,6 @@ public class DebugDialogController implements Initializable, Clock {
             long minutes = (hour * 60) + minute;
 
             return (double)minutes / TOTAL_MINUTES;
-        }
-    }
-    
-    private static class SimulationClock implements Clock {
-        
-        private final ReadOnlyObjectWrapper<LocalDate> date = new ReadOnlyObjectWrapper<>();
-        private final ReadOnlyObjectWrapper<LocalTime> time = new ReadOnlyObjectWrapper<>();
-
-        private SimulationClock(LocalDate date, LocalTime time) {
-            this.date.set(date);
-            this.time.set(time);
-        }
-        
-        private void update(LocalTime time) {
-            this.time.set(time);
-        }
-        
-        @Override
-        public ReadOnlyObjectProperty<LocalDate> dateProperty() {
-            return this.date.getReadOnlyProperty();
-        }
-
-        @Override
-        public ReadOnlyObjectProperty<LocalTime> timeProperty() {
-            return this.time.getReadOnlyProperty();
         }
     }
 }
