@@ -6,7 +6,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -32,11 +34,28 @@ public class DebugDialogController implements Initializable {
     private Label timeLabel;
     @FXML
     private HBox skyColorSimulationHBox;
-
+    @FXML
+    private ToggleGroup weatherRadioGroup;
+    @FXML
+    private RadioButton sunnyRadioButton;
+    @FXML
+    private RadioButton rainyRadioButton;
+    @FXML
+    private RadioButton snowyRadioButton;
+    @FXML
+    private Label cloudLabel;
+    @FXML
+    private Slider cloudSlider;
+    @FXML
+    private Label temperatureLabel;
+    @FXML
+    private Slider temperatureSlider;
+    
     private static final DateTimeFormatter sliderLabelFormatter = DateTimeFormatter.ofPattern("HH:mm");
     private static final TimeSliderConverter timeSliderConverter = new TimeSliderConverter();
     
     private final DebugClock debugClock = new DebugClock();
+    private final DebugWeather debugWeather = new DebugWeather();
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,6 +78,22 @@ public class DebugDialogController implements Initializable {
         });
         
         this.simulateSkyColor();
+        
+        this.sunnyRadioButton.setUserData("sunny");
+        this.rainyRadioButton.setUserData("rainy");
+        this.snowyRadioButton.setUserData("snowy");
+        this.cloudLabel.textProperty().bind(
+            binding(this.cloudSlider.valueProperty())
+            .computeValue(() -> String.format("%.2f", this.cloudSlider.getValue()))
+        );
+        this.temperatureLabel.textProperty().bind(
+            binding(this.temperatureSlider.valueProperty())
+            .computeValue(() -> String.format("%.2f", this.temperatureSlider.getValue()))
+        );
+        
+        this.debugWeather.bind(this.weatherRadioGroup);
+        this.debugWeather.bindCloud(this.cloudSlider.valueProperty());
+        this.debugWeather.bindTemperature(this.temperatureSlider.valueProperty());
     }
     
     private Double toSliderValue(LocalTime time) {
@@ -80,7 +115,7 @@ public class DebugDialogController implements Initializable {
         this.skyColorSimulationHBox.getChildren().clear();
         
         SimulationClock simulationClock = new SimulationClock(this.debugClock.getDate(), LocalTime.MIN);
-        SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, simulationClock);
+        SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, simulationClock, this.debugWeather);
         
         LocalTime time = LocalTime.MIN;
         while (time.equals(LocalTime.MAX) || time.isBefore(LocalTime.MAX)) {
@@ -105,6 +140,10 @@ public class DebugDialogController implements Initializable {
 
     public Clock getClock() {
         return this.debugClock;
+    }
+    
+    public Weather getWeather() {
+        return this.debugWeather;
     }
     
     private static class DebugClock extends ClockBase {

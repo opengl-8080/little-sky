@@ -16,8 +16,10 @@ public class SkyColor {
     
     private final ReadOnlyObjectWrapper<Color> color = new ReadOnlyObjectWrapper<>();
     private final ObjectProperty<SkyColorGradation> gradationProperty = new SimpleObjectProperty<>(new SkyColorGradation());
+    private final Weather weather;
     
-    public SkyColor(City city, Clock clock) {
+    public SkyColor(City city, Clock clock, Weather weather) {
+        this.weather = weather;
         this.gradationProperty.bind(
             binding(clock.dateProperty())
             .computeValue(() -> createGradation(city, clock.getDate()))

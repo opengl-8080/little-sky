@@ -40,4 +40,8 @@ public class DebugDialog {
     public Clock getDebugClock() {
         return this.controller.getClock();
     }
+    
+    public Weather getDebugWeather() {
+        return this.controller.getWeather();
+    }
 }

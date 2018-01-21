@@ -24,14 +24,18 @@ import java.util.function.Supplier;
 import static littlesky.BindingBuilder.*;
 
 public class Controller implements Initializable {
+    private static final Image SNOWY = new Image("/snowy.png");
+    private static final Image RAINY = new Image("/rainy.png");
     private static final CornerRadii WINDOW_CORNER_RADII = new CornerRadii(10.0);
     
     private Stage primaryStage;
     private double mouseOffsetX;
     private double mouseOffsetY;
     
+    private OptionsWindow optionsWindow;
     private DebugDialog debugDialog;
     private RealTimeClock realTimeClock;
+    private OpenWeatherMap openWeatherMap;
     private MoonAge moonAge;
     
     @FXML
@@ -46,21 +50,24 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resources) {
         this.debugDialog = new DebugDialog();
+        this.optionsWindow = new OptionsWindow();
         this.moonAge = new MoonAge();
+        this.openWeatherMap = new OpenWeatherMap();
         
         this.realTimeClock = new RealTimeClock();
-        this.replaceClock(this.realTimeClock);
+        this.replaceClock(this.realTimeClock, this.openWeatherMap);
         this.realTimeClock.start();
     }
     
-    private void replaceClock(Clock newClock) {
-        SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, newClock);
+    private void replaceClock(Clock newClock, Weather weather) {
+        SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, newClock, weather);
         
         this.timeLabel.textProperty().bind(
             binding(newClock.timeProperty()).computeValue(this.formatClockTime(newClock))
         );
         this.timeLabel.textFillProperty().bind(
-            binding(newClock.timeProperty()).computeValue(() -> {
+            binding(newClock.timeProperty())
+            .computeValue(() -> {
                 double brightness = skyColor.getBrightness();
                 return this.decideTimeFontColor(brightness);
             })
@@ -72,7 +79,16 @@ public class Controller implements Initializable {
         
         this.moonAge.bind(newClock.dateProperty());
         this.moonAgeImageView.imageProperty().bind(
-            binding(this.moonAge.ageProperty()).computeValue(this::getMoonImage)
+            binding(this.moonAge.ageProperty())
+            .computeValue(() -> {
+                if (weather.isRainy()) {
+                    return RAINY;
+                } else if (weather.isSnowy()) {
+                    return SNOWY;
+                } else {
+                    return this.getMoonImage();
+                }
+            })
         );
     }
     
@@ -132,13 +148,18 @@ public class Controller implements Initializable {
     
     @FXML
     public void openDebug() {
-        this.replaceClock(this.debugDialog.getDebugClock());
+        this.replaceClock(this.debugDialog.getDebugClock(), this.debugDialog.getDebugWeather());
         this.debugDialog.show();
-        this.replaceClock(this.realTimeClock);
+        this.replaceClock(this.realTimeClock, this.openWeatherMap);
     }
     
     @FXML
     public void changeAlwaysOnTop() {
         this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+    }
+    
+    @FXML
+    public void openOptions() {
+        this.optionsWindow.open(this.primaryStage);
     }
 }

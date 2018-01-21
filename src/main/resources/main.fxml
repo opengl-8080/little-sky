@@ -24,6 +24,7 @@
          <contextMenu>
             <ContextMenu>
               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openOptions" text="Opitons" />
                   <CheckMenuItem fx:id="alwaysOnTopMenuItem" mnemonicParsing="false" onAction="#changeAlwaysOnTop" text="Always on top" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#openDebug" text="Debug" />

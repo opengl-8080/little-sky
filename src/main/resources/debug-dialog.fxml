@@ -3,13 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="350.0" spacing="10.0" style="-fx-padding: 10px;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.DebugDialogController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="350.0" spacing="10.0" style="-fx-padding: 10px;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.DebugDialogController">
    <children>
       <HBox spacing="10.0">
          <children>
@@ -41,5 +43,46 @@
             <Insets left="5.0" right="5.0" />
          </padding>
       </HBox>
+      <HBox spacing="15.0">
+         <children>
+            <RadioButton fx:id="sunnyRadioButton" mnemonicParsing="false" selected="true" text="sunny">
+               <toggleGroup>
+                  <ToggleGroup fx:id="weatherRadioGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rainyRadioButton" mnemonicParsing="false" text="rainy" toggleGroup="$weatherRadioGroup" />
+            <RadioButton fx:id="snowyRadioButton" mnemonicParsing="false" text="snowy" toggleGroup="$weatherRadioGroup" />
+         </children>
+      </HBox>
+      <HBox spacing="10.0">
+         <children>
+            <Label text="Cloud">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="cloudLabel" text="0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <Slider fx:id="cloudSlider" majorTickUnit="0.5" max="1.0" showTickLabels="true" showTickMarks="true" />
+      <HBox spacing="10.0">
+         <children>
+            <Label text="Temperature">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="temperatureLabel" text="0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <Slider fx:id="temperatureSlider" majorTickUnit="10.0" max="50.0" min="-50.0" showTickLabels="true" showTickMarks="true" value="15.0" />
    </children>
 </VBox>
