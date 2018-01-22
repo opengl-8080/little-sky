@@ -73,27 +73,25 @@ public class DebugDialogController implements Initializable {
         );
 
         this.debugClock.bindDate(this.datePicker.valueProperty());
-        this.debugClock.dateProperty().addListener((value, oldValue, newDate) -> {
-            this.simulateSkyColor();
-        });
-        
-        this.simulateSkyColor();
         
         this.sunnyRadioButton.setUserData("sunny");
         this.rainyRadioButton.setUserData("rainy");
         this.snowyRadioButton.setUserData("snowy");
-        this.cloudLabel.textProperty().bind(
-            binding(this.cloudSlider.valueProperty())
-            .computeValue(() -> String.format("%.2f", this.cloudSlider.getValue()))
-        );
-        this.temperatureLabel.textProperty().bind(
-            binding(this.temperatureSlider.valueProperty())
-            .computeValue(() -> String.format("%.2f", this.temperatureSlider.getValue()))
-        );
+        this.cloudLabel.textProperty().bind(this.cloudSlider.valueProperty().asString("%.2f"));
+        this.temperatureLabel.textProperty().bind(this.temperatureSlider.valueProperty().asString("%.2f"));
         
         this.debugWeather.bind(this.weatherRadioGroup);
         this.debugWeather.bindCloud(this.cloudSlider.valueProperty());
         this.debugWeather.bindTemperature(this.temperatureSlider.valueProperty());
+        
+        this.debugClock.dateProperty().addListener((value, oldValue, newDate) -> {
+            this.simulateSkyColor();
+        });
+        this.debugWeather.cloudRateProperty().addListener((value, oldValue, newDate) -> {
+            this.simulateSkyColor();
+        });
+
+        this.simulateSkyColor();
     }
     
     private Double toSliderValue(LocalTime time) {

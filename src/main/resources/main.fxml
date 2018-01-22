@@ -8,9 +8,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<HBox fx:id="hBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" prefHeight="50.0" prefWidth="150.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.Controller">
+<HBox fx:id="hBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" spacing="10.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10; -fx-padding: 5;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.Controller">
    <children>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
          <center>
@@ -34,5 +35,6 @@
             </ContextMenu>
          </contextMenu>
       </Label>
+      <Pane fx:id="temperaturePane" prefWidth="10.0" style="-fx-background-color: red;" />
    </children>
 </HBox>

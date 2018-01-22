@@ -1,24 +1,9 @@
 package littlesky;
 
-public class OpenWeatherMap implements Weather {
-
-    @Override
-    public boolean isRainy() {
-        return false;
-    }
-
-    @Override
-    public boolean isSnowy() {
-        return false;
-    }
-
-    @Override
-    public double getCloudyRate() {
-        return 0;
-    }
-
-    @Override
-    public double getTemperature() {
-        return 0;
+public class OpenWeatherMap extends WeatherBase {
+ 
+    public OpenWeatherMap() {
+        this.weatherType.set(WeatherType.SUNNY);
+        this.temperature.setValue(15.0);
     }
 }

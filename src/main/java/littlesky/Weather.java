@@ -1,10 +1,15 @@
 package littlesky;
 
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+
 public interface Weather {
     
-    boolean isRainy();
-    boolean isSnowy();
-    double getCloudyRate();
+    WeatherType getWeatherType();
+    double getCloudRate();
     double getTemperature();
     
+    ReadOnlyObjectProperty<WeatherType> weatherTypeProperty();
+    ReadOnlyDoubleProperty cloudRateProperty();
+    ReadOnlyDoubleProperty temperatureProperty();
 }

@@ -13,6 +13,8 @@ import java.time.LocalTime;
 import static littlesky.BindingBuilder.*;
 
 public class SkyColor {
+    private static final double MIN_SATURATION_AT_FULL_CLOUDY = 0.0;
+    private static final double MIN_BRIGHTNESS_AT_FULL_CLOUDY = 0.7;
     
     private final ReadOnlyObjectWrapper<Color> color = new ReadOnlyObjectWrapper<>();
     private final ObjectProperty<SkyColorGradation> gradationProperty = new SimpleObjectProperty<>(new SkyColorGradation());
@@ -26,9 +28,16 @@ public class SkyColor {
         );
         
         this.color.bind(
-            binding(clock.timeProperty())
-            .computeValue(() -> this.gradationProperty.get().at(clock.getTime()))
+            binding(clock.timeProperty(), weather.cloudRateProperty())
+            .computeValue(() -> this.applyCouldRate(this.gradationProperty.get().at(clock.getTime())))
         );
+    }
+    
+    private Color applyCouldRate(Color baseSkyColor) {
+        double cloudRate = this.weather.getCloudRate();
+        double saturationFactor = 1.0 - (1.0 - MIN_SATURATION_AT_FULL_CLOUDY) * cloudRate;
+        double brightnessFactor = 1.0 - (1.0 - MIN_BRIGHTNESS_AT_FULL_CLOUDY) * cloudRate;
+        return baseSkyColor.deriveColor(0, saturationFactor, brightnessFactor, 1.0);
     }
 
     private SkyColorGradation createGradation(City city, LocalDate date) {
