@@ -7,12 +7,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Properties;
 
 public class Options {
     
     private static final String CONFIG_FILE = "./littlesky.xml";
     private static final String OPEN_WEATHER_MAP_API_KEY = "open-weather-map-api-key";
+    private static final String HTTP_PROXY_HOST = "http-proxy.host";
+    private static final String HTTP_PROXY_PORT = "http-proxy.port";
+    private static final String ALWAYS_ON_TOP = "always-on-top";
     private static final Options instance = new Options();
     
     public static Options getInstance() {
@@ -39,6 +43,44 @@ public class Options {
     
     public Optional<String> getOpenWeatherMapApiKey() {
         return Optional.ofNullable((String)this.properties.get(OPEN_WEATHER_MAP_API_KEY));
+    }
+    
+    public void setHttpProxyHost(String host) {
+        this.properties.put(HTTP_PROXY_HOST, host);
+    }
+    
+    public Optional<String> getHttpProxyHost() {
+        return Optional.ofNullable((String)this.properties.get(HTTP_PROXY_HOST));
+    }
+
+    public void setHttpProxyPort(int port) {
+        this.properties.put(HTTP_PROXY_PORT, String.valueOf(port));
+    }
+
+    public void clearHttpProxyPort() {
+        if (this.properties.containsKey(HTTP_PROXY_PORT)) {
+            this.properties.remove(HTTP_PROXY_PORT);
+        }
+    }
+    
+    public void setAlwaysOnTop(boolean flag) {
+        this.properties.put(ALWAYS_ON_TOP, flag ? "true" : "false");
+    }
+    
+    public boolean isAlwaysOnTop() {
+        if (!this.properties.containsKey(ALWAYS_ON_TOP)) {
+            return false;
+        }
+        return Boolean.valueOf((String)this.properties.get(ALWAYS_ON_TOP));
+    }
+
+    public OptionalInt getHttpProxyPort() {
+        if (this.properties.containsKey(HTTP_PROXY_PORT)) {
+            String stringPort = (String) this.properties.get(HTTP_PROXY_PORT);
+            return OptionalInt.of(Integer.parseInt(stringPort));
+        } else {
+            return OptionalInt.empty(); 
+        }
     }
     
     public void save() {

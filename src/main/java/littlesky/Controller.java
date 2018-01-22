@@ -37,6 +37,7 @@ public class Controller implements Initializable {
     private RealTimeClock realTimeClock;
     private OpenWeatherMap openWeatherMap;
     private MoonAge moonAge;
+    private Options options;
     
     @FXML
     private CheckMenuItem alwaysOnTopMenuItem;
@@ -51,6 +52,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resources) {
+        this.options = Options.getInstance();
         this.debugDialog = new DebugDialog();
         this.optionsWindow = new OptionsWindow();
         this.moonAge = new MoonAge();
@@ -59,6 +61,8 @@ public class Controller implements Initializable {
         this.realTimeClock = new RealTimeClock();
         this.replaceClockAndWeather(this.realTimeClock, this.openWeatherMap);
         this.realTimeClock.start();
+        
+        this.alwaysOnTopMenuItem.setSelected(this.options.isAlwaysOnTop());
     }
     
     private void replaceClockAndWeather(Clock newClock, Weather weather) {
@@ -151,6 +155,7 @@ public class Controller implements Initializable {
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.debugDialog.initOwner(primaryStage);
+        this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
     }
     
     @FXML
@@ -168,6 +173,8 @@ public class Controller implements Initializable {
     @FXML
     public void changeAlwaysOnTop() {
         this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+        this.options.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+        this.options.save();
     }
     
     @FXML
