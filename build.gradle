@@ -28,4 +28,5 @@ repositories {
 
 dependencies {
     compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.3'
 }

@@ -56,7 +56,8 @@ public class Controller implements Initializable {
         this.debugDialog = new DebugDialog();
         this.optionsWindow = new OptionsWindow();
         this.moonAge = new MoonAge();
-        this.openWeatherMap = new OpenWeatherMap();
+        this.openWeatherMap = OpenWeatherMap.getInstance();
+        this.openWeatherMap.start();
         
         this.realTimeClock = new RealTimeClock();
         this.replaceClockAndWeather(this.realTimeClock, this.openWeatherMap);
