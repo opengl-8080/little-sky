@@ -16,6 +16,8 @@ public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Thread.setDefaultUncaughtExceptionHandler((thread, th) -> ErrorDialog.show(th));
+        
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/main.fxml"));
         Parent root = loader.load();
         
@@ -25,6 +27,7 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         primaryStage.setScene(scene);
+        primaryStage.setTitle("littlesky");
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.show();
     }

@@ -57,7 +57,9 @@ public class Controller implements Initializable {
         this.optionsWindow = new OptionsWindow();
         this.moonAge = new MoonAge();
         this.openWeatherMap = OpenWeatherMap.getInstance();
-        this.openWeatherMap.start();
+        if (this.options.getOpenWeatherMapApiKey().isPresent()) {
+            this.openWeatherMap.start();
+        }
         
         this.realTimeClock = new RealTimeClock();
         this.replaceClockAndWeather(this.realTimeClock, this.openWeatherMap);

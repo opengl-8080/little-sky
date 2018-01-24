@@ -32,7 +32,7 @@ public class MoonAge {
     }
 
     private double calculateAge(LocalDate date) {
-        long days = Math.abs(BASE_DATE.until(date, ChronoUnit.DAYS)) + 1;
+        long days = Math.abs(BASE_DATE.until(date, ChronoUnit.DAYS));
         double normalizedDays = days % METONIC_CYCLE + 0.5; // at noon
         return (AGE_AT_BASE_DATE + normalizedDays) % AVERAGE_OF_MOON_PERIOD;
     }

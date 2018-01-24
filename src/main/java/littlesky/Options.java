@@ -42,7 +42,7 @@ public class Options {
     }
     
     public Optional<String> getOpenWeatherMapApiKey() {
-        return Optional.ofNullable((String)this.properties.get(OPEN_WEATHER_MAP_API_KEY));
+        return Optional.ofNullable(this.getString(OPEN_WEATHER_MAP_API_KEY));
     }
     
     public void setHttpProxyHost(String host) {
@@ -50,7 +50,7 @@ public class Options {
     }
     
     public Optional<String> getHttpProxyHost() {
-        return Optional.ofNullable((String)this.properties.get(HTTP_PROXY_HOST));
+        return Optional.ofNullable(this.getString(HTTP_PROXY_HOST));
     }
 
     public void setHttpProxyPort(int port) {
@@ -75,11 +75,11 @@ public class Options {
     }
 
     public OptionalInt getHttpProxyPort() {
-        if (this.properties.containsKey(HTTP_PROXY_PORT)) {
-            String stringPort = (String) this.properties.get(HTTP_PROXY_PORT);
-            return OptionalInt.of(Integer.parseInt(stringPort));
+        Integer integer = this.getInt(HTTP_PROXY_PORT);
+        if (integer == null) {
+            return OptionalInt.empty();
         } else {
-            return OptionalInt.empty(); 
+            return OptionalInt.of(integer);
         }
     }
     
@@ -88,6 +88,24 @@ public class Options {
             this.properties.storeToXML(outputStream, "littkesky", "UTF-8");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        }
+    }
+    
+    private String getString(String key) {
+        Object value = this.properties.get(key);
+        if (value == null) {
+            return null;
+        }
+        String string = (String)value;
+        return string.isEmpty() ? null : string;
+    }
+    
+    private Integer getInt(String key) {
+        String text = this.getString(key);
+        if (text == null) {
+            return null;
+        } else {
+            return Integer.parseInt(text);
         }
     }
 }
