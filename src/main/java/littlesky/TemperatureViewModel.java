@@ -2,12 +2,14 @@ package littlesky;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableDoubleValue;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
 import static littlesky.BindingBuilder.*;
 
-public class TemperatureColor {
+public class TemperatureViewModel {
     private static final Color STANDARD_COLOR = Color.web("#FFFFFF");
     private static final Color HOT_COLOR = Color.web("#FF3000");
     private static final Color COLD_COLOR = Color.web("#0010FF");
@@ -17,26 +19,28 @@ public class TemperatureColor {
     private static final double HOT_RANGE_SIZE = Math.abs(HOT_TEMPERATURE - STANDARD_TEMPERATURE);
     private static final double COLD_RANGE_SIZE = Math.abs(COLD_TEMPERATURE - STANDARD_TEMPERATURE);
     
-    private ReadOnlyObjectWrapper<Color> color = new ReadOnlyObjectWrapper<>(Color.BLACK);
+    private final ReadOnlyObjectWrapper<Background> background = new ReadOnlyObjectWrapper<>(background(Color.WHITE));
     
-    public void bind(ObservableDoubleValue temperatureProperty) {
-        this.color.bind(
-            binding(temperatureProperty)
+    public void bind(Weather weather) {
+        this.background.bind(
+            binding(weather.temperatureProperty())
             .computeValue(() -> {
-                double temperature = temperatureProperty.get();
+                double temperature = weather.getTemperature();
                 double delta = temperature - STANDARD_TEMPERATURE;
                 Color toColor = delta < 0 ? COLD_COLOR : HOT_COLOR;
                 double rangeSize = delta < 0 ? COLD_RANGE_SIZE : HOT_RANGE_SIZE;
-                return STANDARD_COLOR.interpolate(toColor, Math.abs(delta)/rangeSize);
+                Color color = STANDARD_COLOR.interpolate(toColor, Math.abs(delta) / rangeSize);
+                return background(color);
             })
         );
     }
-    
-    public ReadOnlyObjectProperty<Color> colorProperty() {
-        return this.color.getReadOnlyProperty();
+
+    public ReadOnlyObjectProperty<Background> backgroundProperty() {
+        return this.background.getReadOnlyProperty();
     }
-    
-    public Color getColor() {
-        return this.color.get();
+
+    private Background background(Color color) {
+        BackgroundFill fill = new BackgroundFill(color, new CornerRadii(5.0), null);
+        return new Background(fill);
     }
 }

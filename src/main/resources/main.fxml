@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<HBox fx:id="hBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" spacing="10.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10; -fx-padding: 5;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.Controller">
+<HBox fx:id="backgroundSkyHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" spacing="10.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10; -fx-padding: 5;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.Controller">
    <children>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
          <center>
-            <ImageView fx:id="moonAgeImageView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+            <ImageView fx:id="skyStatusIconImageView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
       <Label fx:id="timeLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="00:00:00" HBox.hgrow="ALWAYS">

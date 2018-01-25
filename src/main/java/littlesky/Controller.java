@@ -5,29 +5,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
-import java.util.function.Supplier;
-
-import static littlesky.BindingBuilder.*;
-import static littlesky.WeatherType.*;
 
 public class Controller implements Initializable {
-    private static final CornerRadii WINDOW_CORNER_RADII = new CornerRadii(10.0);
-    
     private Stage primaryStage;
     private double mouseOffsetX;
     private double mouseOffsetY;
@@ -36,7 +23,7 @@ public class Controller implements Initializable {
     private DebugDialog debugDialog;
     private RealTimeClock realTimeClock;
     private OpenWeatherMap openWeatherMap;
-    private MoonAge moonAge;
+    private MoonPhase moonPhase;
     private Options options;
     
     @FXML
@@ -44,9 +31,9 @@ public class Controller implements Initializable {
     @FXML
     private Label timeLabel;
     @FXML
-    private HBox hBox;
+    private HBox backgroundSkyHBox;
     @FXML
-    private ImageView moonAgeImageView;
+    private ImageView skyStatusIconImageView;
     @FXML
     private Pane temperaturePane;
 
@@ -55,7 +42,7 @@ public class Controller implements Initializable {
         this.options = Options.getInstance();
         this.debugDialog = new DebugDialog();
         this.optionsWindow = new OptionsWindow();
-        this.moonAge = new MoonAge();
+        this.moonPhase = new MoonPhase();
         this.openWeatherMap = OpenWeatherMap.getInstance();
         if (this.options.getOpenWeatherMapApiKey().isPresent()) {
             this.openWeatherMap.start();
@@ -70,77 +57,25 @@ public class Controller implements Initializable {
     
     private void replaceClockAndWeather(Clock newClock, Weather weather) {
         SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, newClock, weather);
-        
-        this.timeLabel.textProperty().bind(
-            binding(newClock.timeProperty()).computeValue(this.formatClockTime(newClock))
-        );
-        this.timeLabel.textFillProperty().bind(
-            binding(newClock.timeProperty())
-            .computeValue(() -> {
-                double brightness = skyColor.getBrightness();
-                return this.decideTimeFontColor(brightness);
-            })
-        );
-        
-        this.hBox.backgroundProperty().bind(
-            binding(skyColor.colorProperty()).computeValue(() -> background(skyColor.getColor()))
-        );
-        
-        this.moonAge.bind(newClock.dateProperty());
-        this.moonAgeImageView.imageProperty().bind(
-            binding(this.moonAge.ageProperty(), weather.weatherTypeProperty())
-            .computeValue(() -> {
-                WeatherType weatherType = weather.getWeatherType();
-                
-                if (weatherType == SUNNY) {
-                    return this.getMoonImage();
-                } else {
-                    return weatherType.getImage();
-                }
-            })
-        );
 
-        TemperatureColor temperatureColor = new TemperatureColor();
-        temperatureColor.bind(weather.temperatureProperty());
-        this.temperaturePane.backgroundProperty().bind(
-            binding(temperatureColor.colorProperty())
-            .computeValue(() -> {
-                BackgroundFill fill = new BackgroundFill(temperatureColor.getColor(), new CornerRadii(5.0), null);
-                return new Background(fill);
-            })
-        );
-    }
-    
-    private Image getMoonImage() {
-        double age = this.moonAge.getAge();
-        double rate = age/29.0;
-        int imageNo = (int)(15*rate);
-        return new Image("/moon_" + imageNo + ".png");
-    }
-    
-    private Color decideTimeFontColor(double skyBrightness) {
-        if (skyBrightness < 0.4) {
-            return Color.WHITE;
-        } else if (0.4 <= skyBrightness && skyBrightness < 0.6) {
-            return Color.LIGHTGRAY;
-        } else if (0.6 <= skyBrightness && skyBrightness < 0.7) {
-            return Color.web("#333");
-        } else {
-            return Color.BLACK;
-        }
-    }
-    
-    private Supplier<String> formatClockTime(Clock clock) {
-        return () -> {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-            LocalTime time = clock.getTime();
-            return time.format(formatter);
-        };
-    }
-    
-    private Background background(Color color) {
-        BackgroundFill fill = new BackgroundFill(color, WINDOW_CORNER_RADII, null);
-        return new Background(fill);
+        TimeLabelViewModel timeLabelViewModel = new TimeLabelViewModel();
+        timeLabelViewModel.bind(newClock, skyColor);
+        this.timeLabel.textProperty().bind(timeLabelViewModel.textProperty());
+        this.timeLabel.textFillProperty().bind(timeLabelViewModel.colorProperty());
+
+        BackgroundSkyViewModel backgroundSkyViewModel = new BackgroundSkyViewModel();
+        backgroundSkyViewModel.bind(skyColor);
+        this.backgroundSkyHBox.backgroundProperty().bind(backgroundSkyViewModel.backgroundProperty());
+        
+        this.moonPhase.bind(newClock.dateProperty());
+
+        SkyStatusIconViewModel skyStatusIconViewModel = new SkyStatusIconViewModel();
+        skyStatusIconViewModel.bind(this.moonPhase, weather);
+        this.skyStatusIconImageView.imageProperty().bind(skyStatusIconViewModel.imageProperty());
+
+        TemperatureViewModel temperatureViewModel = new TemperatureViewModel();
+        temperatureViewModel.bind(weather);
+        this.temperaturePane.backgroundProperty().bind(temperatureViewModel.backgroundProperty());
     }
     
     @FXML

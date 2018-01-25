@@ -33,7 +33,7 @@ public class OpenWeatherMap extends WeatherBase {
     private ReadOnlyBooleanWrapper running = new ReadOnlyBooleanWrapper(false);
     
     private OpenWeatherMap() {
-        this.updateWeatherType(WeatherType.SUNNY);
+        this.updateWeatherType(OpenWeatherMapType.SUNNY);
         this.updateTemperature(15.0);
         this.updateCloudRate(0.0);
     }
@@ -101,7 +101,7 @@ public class OpenWeatherMap extends WeatherBase {
                 triedCount++;
             }
             
-            TimeUnit.SECONDS.wait(RETRY_WAIT_SECONDS);
+            TimeUnit.SECONDS.sleep(RETRY_WAIT_SECONDS);
         } while (triedCount < MAX_RETRY_COUNT);
 
         throw new UncheckedIOException(exception);
@@ -183,23 +183,8 @@ public class OpenWeatherMap extends WeatherBase {
         }
         
         private WeatherType getWeatherType() {
-            if (this.isSnowy()) {
-                return WeatherType.SNOWY;
-            } else if (this.isRainy()) {
-                return WeatherType.RAINY;
-            } else {
-                return WeatherType.SUNNY;
-            }
-        }
-        
-        private boolean isSnowy() {
-            int id = this.weather.get(0).id;
-            return 600 <= id && id < 700;
-        }
-        
-        private boolean isRainy() {
-            int id = this.weather.get(0).id;
-            return id < 600;
+            ResponseWeather weather = this.weather.get(0);
+            return new OpenWeatherMapType(weather.id, weather.icon);
         }
     }
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -208,6 +193,8 @@ public class OpenWeatherMap extends WeatherBase {
          * <a href="https://openweathermap.org/weather-conditions">weather condition code list</a>
          */
         public int id;
+        
+        public String icon;
     }
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class ResponseMain {

@@ -4,7 +4,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.ToggleGroup;
 
 import static littlesky.BindingBuilder.*;
-import static littlesky.WeatherType.*;
 
 public class DebugWeather extends WeatherBase {
     
@@ -14,11 +13,11 @@ public class DebugWeather extends WeatherBase {
             .computeValue(() -> {
                 Object selected = weatherGroup.getSelectedToggle().getUserData();
                 if ("sunny".equals(selected)) {
-                    return SUNNY;
+                    return OpenWeatherMapType.SUNNY;
                 } else if ("rainy".equals(selected)) {
-                    return RAINY;
+                    return OpenWeatherMapType.RAINY;
                 } else if ("snowy".equals(selected)) {
-                    return SNOWY;
+                    return OpenWeatherMapType.SNOWY;
                 } else {
                     throw new IllegalStateException("unknown weather type = " + selected);
                 }
