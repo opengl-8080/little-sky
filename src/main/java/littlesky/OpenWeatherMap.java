@@ -137,19 +137,27 @@ public class OpenWeatherMap extends WeatherBase {
     }
     
     private void updateTemperature(double temperature) {
-        Platform.runLater(() -> this.temperature.set(temperature));
+        this.runLater(() -> this.temperature.set(temperature));
     }
     
     private void updateCloudRate(double cloudRate) {
-        Platform.runLater(() -> this.cloudRate.set(cloudRate));
+        this.runLater(() -> this.cloudRate.set(cloudRate));
     }
     
     private void updateWeatherType(WeatherType type) {
-        Platform.runLater(() -> this.weatherType.set(type));
+        this.runLater(() -> this.weatherType.set(type));
     }
     
     private void updateRunning(boolean running) {
-        Platform.runLater(() -> this.running.set(running));
+        this.runLater(() -> this.running.set(running));
+    }
+    
+    private void runLater(Runnable runnable) {
+        if (Platform.isFxApplicationThread()) {
+            runnable.run();
+        } else {
+            Platform.runLater(runnable);
+        }
     }
     
     public ReadOnlyBooleanProperty runningProperty() {
