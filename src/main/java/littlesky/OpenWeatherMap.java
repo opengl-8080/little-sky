@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class OpenWeatherMap extends WeatherBase {
@@ -30,9 +31,14 @@ public class OpenWeatherMap extends WeatherBase {
  
     private ObjectMapper objectMapper = new ObjectMapper();
     private Options options = Options.getInstance();
+    private ScheduledExecutorService executor;
     private ReadOnlyBooleanWrapper running = new ReadOnlyBooleanWrapper(false);
     
     private OpenWeatherMap() {
+        this.initStatus();
+    }
+
+    private void initStatus() {
         this.updateWeatherType(OpenWeatherMapType.SUNNY);
         this.updateTemperature(15.0);
         this.updateCloudRate(0.0);
@@ -42,10 +48,11 @@ public class OpenWeatherMap extends WeatherBase {
         if (this.isRunning()) {
             throw new IllegalStateException("OpenWeatherMap service thread already started.");
         }
+        System.out.println("start service");
         
         URL url = this.buildRequestUrl();
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        this.executor = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable);
             thread.setName("OpenWeatherMap Request Thread");
             thread.setDaemon(true);
@@ -53,12 +60,8 @@ public class OpenWeatherMap extends WeatherBase {
         });
 
         updateRunning(true);
-        executor.scheduleWithFixedDelay(() -> {
-            if (Thread.currentThread().isInterrupted()) {
-                updateRunning(false);
-                executor.shutdown();
-                return;
-            }
+        this.executor.scheduleWithFixedDelay(() -> {
+            System.out.println("request");
 
             try {
                 ResponseRoot root = withRetry(() -> tryRequest(url));
@@ -68,14 +71,21 @@ public class OpenWeatherMap extends WeatherBase {
                 updateCloudRate(root.getCloudRate());
 
             } catch (InterruptedException e) {
-                updateRunning(false);
-                executor.shutdown();
+                System.out.println("2");
+                this.stop();
             } catch (Exception e) {
-                updateRunning(false);
-                executor.shutdown();
+                this.stop();
                 ErrorDialog.show(e);
             }
         }, 0, 15, TimeUnit.MINUTES);
+    }
+
+    public void stop() {
+        System.out.println("stop service");
+        updateRunning(false);
+        this.executor.shutdown();
+        this.executor.shutdownNow();
+        this.initStatus();
     }
     
     private URL buildRequestUrl() {

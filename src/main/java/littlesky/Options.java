@@ -1,5 +1,8 @@
 package littlesky;
 
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +27,7 @@ public class Options {
     }
     
     private Properties properties;
+    private final ReadOnlyStringWrapper openWeatherMapApiKey = new ReadOnlyStringWrapper();
     
     private Options() {
         this.properties = new Properties();
@@ -31,6 +35,7 @@ public class Options {
         try {
             FileInputStream inputStream = new FileInputStream(CONFIG_FILE);
             this.properties.loadFromXML(inputStream);
+            this.openWeatherMapApiKey.set(this.getOpenWeatherMapApiKey().orElse(""));
         } catch (FileNotFoundException ignored) {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -39,10 +44,15 @@ public class Options {
     
     public void setOpenWeatherMapApiKey(String apiKey) {
         this.properties.put(OPEN_WEATHER_MAP_API_KEY, apiKey);
+        this.openWeatherMapApiKey.set(apiKey);
     }
     
     public Optional<String> getOpenWeatherMapApiKey() {
         return Optional.ofNullable(this.getString(OPEN_WEATHER_MAP_API_KEY));
+    }
+
+    public ReadOnlyStringProperty getOpenWeatherMapApiKeyProperty() {
+        return this.openWeatherMapApiKey.getReadOnlyProperty();
     }
     
     public void setHttpProxyHost(String host) {

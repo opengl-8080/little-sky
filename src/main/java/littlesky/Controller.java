@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -36,6 +37,10 @@ public class Controller implements Initializable {
     private ImageView skyStatusIconImageView;
     @FXML
     private Pane temperaturePane;
+    @FXML
+    private MenuItem startWeatherServiceMenuItem;
+    @FXML
+    private MenuItem stopWeatherServiceMenuItem;
 
     @Override
     public void initialize(URL url, ResourceBundle resources) {
@@ -53,6 +58,16 @@ public class Controller implements Initializable {
         this.realTimeClock.start();
         
         this.alwaysOnTopMenuItem.setSelected(this.options.isAlwaysOnTop());
+
+        this.options.getOpenWeatherMapApiKeyProperty().addListener((v, o, n) -> {
+            if (n.isEmpty()) {
+                this.stopWeatherService();
+            }
+        });
+        this.startWeatherServiceMenuItem.disableProperty().bind(
+            this.openWeatherMap.runningProperty().or(this.options.getOpenWeatherMapApiKeyProperty().isEmpty())
+        );
+        this.stopWeatherServiceMenuItem.disableProperty().bind(this.openWeatherMap.runningProperty().not());
     }
     
     private void replaceClockAndWeather(Clock newClock, Weather weather) {
@@ -118,5 +133,15 @@ public class Controller implements Initializable {
     @FXML
     public void openOptions() {
         this.optionsWindow.open(this.primaryStage);
+    }
+
+    @FXML
+    public void startWeatherService() {
+        this.openWeatherMap.start();
+    }
+
+    @FXML
+    public void stopWeatherService() {
+        this.openWeatherMap.stop();
     }
 }
