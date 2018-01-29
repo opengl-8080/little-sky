@@ -43,9 +43,17 @@
             </Label>
             <TextField fx:id="httpProxyHostTextField" promptText="IP address or hostname" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="httpProxyPortTextField" promptText="Port number" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Proxy User" GridPane.rowIndex="3" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Proxy User" GridPane.rowIndex="3">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
             <TextField fx:id="proxyUserName" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="Proxy Password" GridPane.rowIndex="4" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Proxy Password" GridPane.rowIndex="4">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
             <TextField fx:id="proxyPasswordName" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          </children>
       </GridPane>
