@@ -8,13 +8,15 @@ import java.util.TimeZone;
  * <a href="http://eco.mtk.nao.ac.jp/koyomi/dni/">各地のこよみ</a>
  */
 public enum JapaneseCity implements City {
-    TOKYO(35.6581, 139.7414),
-    OSAKA(34.6833, 135.4833);
+    TOKYO("Tokyo", 35.6581, 139.7414),
+    OSAKA("Osaka", 34.6833, 135.4833);
 
     private final double latitude;
     private final double longitude;
+    private final String name;
 
-    JapaneseCity(double latitude, double longitude) {
+    JapaneseCity(String name, double latitude, double longitude) {
+        this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -27,5 +29,15 @@ public enum JapaneseCity implements City {
     @Override
     public TimeZone timeZone() {
         return TimeZone.getTimeZone("Asia/Tokyo");
+    }
+    
+    @Override
+    public String country() {
+        return "Japan";
+    }
+    
+    @Override
+    public String label() {
+        return this.name;
     }
 }
