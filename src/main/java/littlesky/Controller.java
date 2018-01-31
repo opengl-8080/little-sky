@@ -1,6 +1,7 @@
 package littlesky;
 
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckMenuItem;
@@ -64,9 +65,12 @@ public class Controller implements Initializable {
                 this.stopWeatherService();
             }
         });
-        this.startWeatherServiceMenuItem.disableProperty().bind(
-            this.openWeatherMap.runningProperty().or(this.options.getOpenWeatherMapApiKeyProperty().isEmpty())
-        );
+        BooleanBinding enableStartWeatherService
+                = this.openWeatherMap.runningProperty().not()
+                    .and(this.options.getOpenWeatherMapApiKeyProperty().isNotEmpty())
+                    .and(this.options.longitudeProperty().isNotNull())
+                    .and(this.options.latitudeProperty().isNotNull());
+        this.startWeatherServiceMenuItem.disableProperty().bind(enableStartWeatherService.not());
         this.stopWeatherServiceMenuItem.disableProperty().bind(this.openWeatherMap.runningProperty().not());
     }
     

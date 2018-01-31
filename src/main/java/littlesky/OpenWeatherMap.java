@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class OpenWeatherMap extends WeatherBase {
@@ -65,7 +64,7 @@ public class OpenWeatherMap extends WeatherBase {
 
             try {
                 ResponseRoot root = withRetry(() -> tryRequest(url));
-
+                
                 updateWeatherType(root.getWeatherType());
                 updateTemperature(root.getTemperature());
                 updateCloudRate(root.getCloudRate());
@@ -89,10 +88,11 @@ public class OpenWeatherMap extends WeatherBase {
     }
     
     private URL buildRequestUrl() {
-        String cityId = "1853909";
+        double longitude = this.options.getLongitude().orElseThrow(() -> new IllegalStateException("longitude is not set"));
+        double latitude = this.options.getLatitude().orElseThrow(() -> new IllegalStateException("latitude is not set"));
         String apiKey = this.options.getOpenWeatherMapApiKey().orElseThrow(() -> new RuntimeException("OpenWeatherMap API Key is not set."));
         try {
-            return new URL("http://api.openweathermap.org/data/2.5/weather?id=" + cityId + "&APPID=" + apiKey);
+            return new URL("http://api.openweathermap.org/data/2.5/weather?lon=" + longitude + "&lat=" + latitude + "&APPID=" + apiKey);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
