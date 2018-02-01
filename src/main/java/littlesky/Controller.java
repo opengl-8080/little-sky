@@ -67,9 +67,7 @@ public class Controller implements Initializable {
         });
         BooleanBinding enableStartWeatherService
                 = this.openWeatherMap.runningProperty().not()
-                    .and(this.options.getOpenWeatherMapApiKeyProperty().isNotEmpty())
-                    .and(this.options.longitudeProperty().isNotNull())
-                    .and(this.options.latitudeProperty().isNotNull());
+                    .and(this.options.getOpenWeatherMapApiKeyProperty().isNotEmpty());
         this.startWeatherServiceMenuItem.disableProperty().bind(enableStartWeatherService.not());
         this.stopWeatherServiceMenuItem.disableProperty().bind(this.openWeatherMap.runningProperty().not());
     }

@@ -1,7 +1,5 @@
 package littlesky;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -12,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -35,8 +34,6 @@ public class Options {
     
     private Properties properties;
     private final ReadOnlyStringWrapper openWeatherMapApiKey = new ReadOnlyStringWrapper();
-    private final ReadOnlyObjectWrapper<Double> latitude = new ReadOnlyObjectWrapper<>();
-    private final ReadOnlyObjectWrapper<Double> longitude = new ReadOnlyObjectWrapper<>();
     
     private Options() {
         this.properties = new Properties();
@@ -50,6 +47,18 @@ public class Options {
             throw new UncheckedIOException(e);
         }
     }
+    
+    
+    public void save(String key, String value) {
+        this.properties.put(key, value);
+    }
+    
+    public String get(String key) {
+        return (String) this.properties.get(key);
+    }
+    
+    
+    
     
     public void setOpenWeatherMapApiKey(String apiKey) {
         this.properties.put(OPEN_WEATHER_MAP_API_KEY, apiKey);
@@ -103,56 +112,27 @@ public class Options {
         return Boolean.valueOf((String)this.properties.get(ALWAYS_ON_TOP));
     }
     
-    public OptionalDouble getLongitude() {
-        Double value = this.getDouble(LONGITUDE);
-        if (value == null) {
-            return OptionalDouble.empty();
-        } else {
-            return OptionalDouble.of(value);
-        }
+    public boolean hasLocation() {
+        return this.properties.get(LONGITUDE) == null
+                || this.properties.get(LATITUDE) == null;
     }
     
-    public void setLongitude(String value) {
-        value = defaultEmpty(value);
-        this.properties.put(LONGITUDE, value);
-        this.longitude.set(value.isEmpty() ? null : Double.valueOf(value));
+    public double getLongitude() {
+        String value = (String) this.properties.get(LONGITUDE);
+        return Double.parseDouble(value);
     }
     
-    public void validateLongitude(String value) throws InvalidInputException {
-        String text = defaultEmpty(value);
-        if (!text.isEmpty() && !text.matches("-?\\d+(\\.\\d+)?")) {
-            throw new InvalidInputException("Longitude must be decimal.");
-        }
-    }
-    
-    public ReadOnlyObjectProperty<Double> longitudeProperty() {
-        return this.longitude.getReadOnlyProperty();
+    public void setLongitude(double longitude) {
+        this.properties.put(LONGITUDE, String.valueOf(longitude));
     }
 
-    public OptionalDouble getLatitude() {
-        Double value = this.getDouble(LATITUDE);
-        if (value == null) {
-            return OptionalDouble.empty();
-        } else {
-            return OptionalDouble.of(value);
-        }
+    public double getLatitude() {
+        String value = (String) this.properties.get(LATITUDE);
+        return Double.parseDouble(value);
     }
 
-    public void setLatitude(String value) {
-        value = defaultEmpty(value);
-        this.properties.put(LATITUDE, value);
-        this.latitude.set(value.isEmpty() ? null : Double.valueOf(value));
-    }
-
-    public void validateLatitude(String value) throws InvalidInputException {
-        String text = defaultEmpty(value);
-        if (!text.isEmpty() && !text.matches("-?\\d+(\\.\\d+)?")) {
-            throw new InvalidInputException("Latitude must be decimal.");
-        }
-    }
-
-    public ReadOnlyObjectProperty<Double> latitudeProperty() {
-        return this.latitude.getReadOnlyProperty();
+    public void setLatitude(double latitude) {
+        this.properties.put(LATITUDE, String.valueOf(latitude));
     }
 
     private String defaultEmpty(String text) {

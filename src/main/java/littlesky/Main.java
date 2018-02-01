@@ -17,13 +17,24 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler((thread, th) -> ErrorDialog.show(th));
+
+        Options options = Options.getInstance();
+        if (!options.hasLocation()) {
+            // TODO open initialize location dialog.
+        }
         
+        UserLocation.load(options.getLongitude(), options.getLatitude());
+
+        this.showMainWindow(primaryStage);
+    }
+
+    private void showMainWindow(Stage primaryStage) throws java.io.IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/main.fxml"));
         Parent root = loader.load();
-        
+
         Controller controller = loader.getController();
         controller.setPrimaryStage(primaryStage);
-        
+
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         primaryStage.setScene(scene);

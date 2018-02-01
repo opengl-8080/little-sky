@@ -70,7 +70,6 @@ public class OpenWeatherMap extends WeatherBase {
                 updateCloudRate(root.getCloudRate());
 
             } catch (InterruptedException e) {
-                System.out.println("2");
                 this.stop();
             } catch (Exception e) {
                 this.stop();
@@ -80,7 +79,6 @@ public class OpenWeatherMap extends WeatherBase {
     }
 
     public void stop() {
-        System.out.println("stop service");
         updateRunning(false);
         this.executor.shutdown();
         this.executor.shutdownNow();
@@ -88,8 +86,9 @@ public class OpenWeatherMap extends WeatherBase {
     }
     
     private URL buildRequestUrl() {
-        double longitude = this.options.getLongitude().orElseThrow(() -> new IllegalStateException("longitude is not set"));
-        double latitude = this.options.getLatitude().orElseThrow(() -> new IllegalStateException("latitude is not set"));
+        UserLocation location = UserLocation.getInstance();
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
         String apiKey = this.options.getOpenWeatherMapApiKey().orElseThrow(() -> new RuntimeException("OpenWeatherMap API Key is not set."));
         try {
             return new URL("http://api.openweathermap.org/data/2.5/weather?lon=" + longitude + "&lat=" + latitude + "&APPID=" + apiKey);

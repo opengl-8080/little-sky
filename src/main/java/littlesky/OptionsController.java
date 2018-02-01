@@ -37,10 +37,16 @@ public class OptionsController implements Initializable {
     
     @FXML
     public void save() {
+        double latitude;
+        double longitude;
         try {
             this.options.validateHttpProxyPort(this.httpProxyPortTextField.getText());
-            this.options.validateLatitude(this.latitudeTextField.getText());
-            this.options.validateLongitude(this.longitudeTextField.getText());
+
+            latitude = this.parseLatitude();
+            UserLocation.validateLatitude(latitude);
+            
+            longitude = this.parseLongitude();
+            UserLocation.validateLongitude(longitude);
         } catch (InvalidInputException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
             alert.setTitle("Error");
@@ -49,14 +55,35 @@ public class OptionsController implements Initializable {
             return;
         }
 
-        this.options.setLatitude(this.latitudeTextField.getText());
-        this.options.setLongitude(this.longitudeTextField.getText());
+        UserLocation location = UserLocation.getInstance();
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+        
+        this.options.setLatitude(latitude);
+        this.options.setLongitude(longitude);
+        
         this.options.setOpenWeatherMapApiKey(this.openWeatherMapApiKeyTextField.getText());
         this.options.setHttpProxyPort(this.httpProxyPortTextField.getText());
         this.options.setHttpProxyHost(this.httpProxyHostTextField.getText());
 
         this.options.save();
         this.ownStage.close();
+    }
+    
+    private double parseLatitude() throws InvalidInputException {
+        try {
+            return Double.parseDouble(this.latitudeTextField.getText());
+        } catch (NumberFormatException e) {
+            throw new InvalidInputException("Latitude must be decimal.");
+        }
+    }
+
+    private double parseLongitude() throws InvalidInputException {
+        try {
+            return Double.parseDouble(this.longitudeTextField.getText());
+        } catch (NumberFormatException e) {
+            throw new InvalidInputException("Longitude must be decimal.");
+        }
     }
     
     @FXML
