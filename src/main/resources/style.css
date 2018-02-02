@@ -1,0 +1,33 @@
+.input__label {
+    -fx-font-size: 15;
+    -fx-max-width: 999999999999999;
+    -fx-max-height: 999999999999999;
+}
+
+.input__grid {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+.input__button {
+    -fx-font-size: 15;
+    -fx-min-width: 80px;
+}
+
+.input-container {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+.input-region {
+    -fx-border-width: 1;
+    -fx-border-color: #AAA;
+    -fx-border-radius: 3;
+    -fx-padding: 5 10 10 10;
+    -fx-margin-bottom: 10;
+}
+
+.input-region__title {
+    -fx-font-size: 16;
+    -fx-underline: true;
+}

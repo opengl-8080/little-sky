@@ -5,8 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
+import java.io.IOException;
 
 public class Main extends Application {
 
@@ -16,16 +19,34 @@ public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Thread.setDefaultUncaughtExceptionHandler((thread, th) -> ErrorDialog.show(th));
+        Thread.setDefaultUncaughtExceptionHandler((thread, th) -> Dialog.error(th));
 
         Options options = Options.getInstance();
         if (!options.hasLocation()) {
-            // TODO open initialize location dialog.
+            this.showSetupDialog(primaryStage);
+            
+            if (!options.hasLocation()) {
+                return;
+            }
         }
-        
-        UserLocation.load(options.getLongitude(), options.getLatitude());
 
         this.showMainWindow(primaryStage);
+    }
+    
+    private void showSetupDialog(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/startup.fxml"));
+        Parent root = loader.load();
+
+        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+
+        SetupController controller = loader.getController();
+        controller.setOwnStage(stage);
+
+        stage.setScene(scene);
+        stage.initOwner(primaryStage);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.showAndWait();
     }
 
     private void showMainWindow(Stage primaryStage) throws java.io.IOException {

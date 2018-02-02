@@ -73,7 +73,7 @@ public class OpenWeatherMap extends WeatherBase {
                 this.stop();
             } catch (Exception e) {
                 this.stop();
-                ErrorDialog.show(e);
+                Dialog.error(e);
             }
         }, 0, 15, TimeUnit.MINUTES);
     }
@@ -86,7 +86,7 @@ public class OpenWeatherMap extends WeatherBase {
     }
     
     private URL buildRequestUrl() {
-        UserLocation location = UserLocation.getInstance();
+        UserLocation location = this.options.getUserLocation();
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
         String apiKey = this.options.getOpenWeatherMapApiKey().orElseThrow(() -> new RuntimeException("OpenWeatherMap API Key is not set."));

@@ -8,9 +8,9 @@ import javafx.scene.control.TextArea;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class ErrorDialog {
+public class Dialog {
     
-    public static void show(Throwable th) {
+    public static void error(Throwable th) {
         th.printStackTrace(System.err);
         Platform.runLater(() -> {
             String message = th.getMessage() == null ? "Unknown error" : th.getMessage();
@@ -30,6 +30,16 @@ public class ErrorDialog {
             alert.showAndWait();
         });
     }
+
+    public static void warn(InvalidInputException e) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage(), ButtonType.OK);
+            alert.setHeaderText(null);
+            alert.setTitle("Invalid input");
+
+            alert.showAndWait();
+        });
+    }
     
-    private ErrorDialog() {}
+    private Dialog() {}
 }

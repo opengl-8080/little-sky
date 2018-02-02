@@ -1,6 +1,5 @@
 package littlesky;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 
@@ -10,9 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.Properties;
 
@@ -113,25 +110,37 @@ public class Options {
     }
     
     public boolean hasLocation() {
-        return this.properties.get(LONGITUDE) == null
-                || this.properties.get(LATITUDE) == null;
+        return this.properties.get(LONGITUDE) != null
+                && this.properties.get(LATITUDE) != null;
     }
     
-    public double getLongitude() {
+    public UserLocation getUserLocation() {
+        if (!this.hasLocation()) {
+            throw new IllegalStateException("Location is not set.");
+        }
+        return new UserLocation(this.getLatitude(), this.getLongitude());
+    }
+    
+    public void setUserLocation(UserLocation location) {
+        this.setLatitude(location.getLatitude());
+        this.setLongitude(location.getLongitude());
+    }
+    
+    private double getLongitude() {
         String value = (String) this.properties.get(LONGITUDE);
         return Double.parseDouble(value);
     }
-    
-    public void setLongitude(double longitude) {
+
+    private void setLongitude(double longitude) {
         this.properties.put(LONGITUDE, String.valueOf(longitude));
     }
 
-    public double getLatitude() {
+    private double getLatitude() {
         String value = (String) this.properties.get(LATITUDE);
         return Double.parseDouble(value);
     }
 
-    public void setLatitude(double latitude) {
+    private void setLatitude(double latitude) {
         this.properties.put(LATITUDE, String.valueOf(latitude));
     }
 

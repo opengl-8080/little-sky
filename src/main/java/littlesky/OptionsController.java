@@ -7,7 +7,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import javax.xml.soap.Text;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -37,16 +36,14 @@ public class OptionsController implements Initializable {
     
     @FXML
     public void save() {
-        double latitude;
-        double longitude;
+        UserLocation location;
         try {
             this.options.validateHttpProxyPort(this.httpProxyPortTextField.getText());
 
-            latitude = this.parseLatitude();
-            UserLocation.validateLatitude(latitude);
+            double latitude = this.parseLatitude();
+            double longitude = this.parseLongitude();
             
-            longitude = this.parseLongitude();
-            UserLocation.validateLongitude(longitude);
+            location = new UserLocation(latitude, longitude);
         } catch (InvalidInputException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
             alert.setTitle("Error");
@@ -55,12 +52,7 @@ public class OptionsController implements Initializable {
             return;
         }
 
-        UserLocation location = UserLocation.getInstance();
-        location.setLatitude(latitude);
-        location.setLongitude(longitude);
-        
-        this.options.setLatitude(latitude);
-        this.options.setLongitude(longitude);
+        this.options.setUserLocation(location);
         
         this.options.setOpenWeatherMapApiKey(this.openWeatherMapApiKeyTextField.getText());
         this.options.setHttpProxyPort(this.httpProxyPortTextField.getText());
