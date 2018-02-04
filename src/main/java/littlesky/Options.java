@@ -12,6 +12,7 @@ import java.io.UncheckedIOException;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Properties;
+import java.util.TimeZone;
 
 public class Options {
     
@@ -21,6 +22,7 @@ public class Options {
     private static final String HTTP_PROXY_PORT = "http-proxy.port";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
+    private static final String TIME_ZONE_ID = "time-zone-id";
     
     private static final String ALWAYS_ON_TOP = "always-on-top";
     private static final Options instance = new Options();
@@ -46,7 +48,7 @@ public class Options {
     }
     
     
-    public void save(String key, String value) {
+    public void put(String key, String value) {
         this.properties.put(key, value);
     }
     
@@ -109,21 +111,23 @@ public class Options {
         return Boolean.valueOf((String)this.properties.get(ALWAYS_ON_TOP));
     }
     
-    public boolean hasLocation() {
-        return this.properties.get(LONGITUDE) != null
-                && this.properties.get(LATITUDE) != null;
+    public boolean hasUserLocation() {
+        return this.get(LONGITUDE) != null
+                && this.get(LATITUDE) != null
+                && this.get(TIME_ZONE_ID) != null;
     }
     
     public UserLocation getUserLocation() {
-        if (!this.hasLocation()) {
+        if (!this.hasUserLocation()) {
             throw new IllegalStateException("Location is not set.");
         }
-        return new UserLocation(this.getLatitude(), this.getLongitude());
+        return new UserLocation(this.getLatitude(), this.getLongitude(), this.getTimeZone());
     }
     
     public void setUserLocation(UserLocation location) {
         this.setLatitude(location.getLatitude());
         this.setLongitude(location.getLongitude());
+        this.setTimeZone(location.getTimeZone());
     }
     
     private double getLongitude() {
@@ -142,6 +146,15 @@ public class Options {
 
     private void setLatitude(double latitude) {
         this.properties.put(LATITUDE, String.valueOf(latitude));
+    }
+    
+    private void setTimeZone(TimeZone timeZone) {
+        this.put(TIME_ZONE_ID, timeZone.getID());
+    }
+    
+    private TimeZone getTimeZone() {
+        String timeZoneId = this.get(TIME_ZONE_ID);
+        return TimeZone.getTimeZone(timeZoneId);
     }
 
     private String defaultEmpty(String text) {

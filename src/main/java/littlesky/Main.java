@@ -22,10 +22,10 @@ public class Main extends Application {
         Thread.setDefaultUncaughtExceptionHandler((thread, th) -> Dialog.error(th));
 
         Options options = Options.getInstance();
-        if (!options.hasLocation()) {
+        if (!options.hasUserLocation()) {
             this.showSetupDialog(primaryStage);
             
-            if (!options.hasLocation()) {
+            if (!options.hasUserLocation()) {
                 return;
             }
         }

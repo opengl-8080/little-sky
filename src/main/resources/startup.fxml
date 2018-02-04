@@ -4,9 +4,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="280.0" spacing="10.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.SetupController">
+<VBox spacing="10.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.SetupController">
    <children>
-      <fx:include source="location-form.fxml" fx:id="locationForm" />
+      <fx:include fx:id="locationForm" source="location-form.fxml" />
       <HBox alignment="CENTER">
          <children>
             <Button fx:id="okButton" mnemonicParsing="false" onAction="#ok" prefWidth="60.0" text="OK" />

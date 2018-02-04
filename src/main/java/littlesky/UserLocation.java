@@ -1,13 +1,18 @@
 package littlesky;
 
+import java.util.Objects;
+import java.util.TimeZone;
+
 public class UserLocation {
     
     private double longitude;
     private double latitude;
+    private TimeZone timeZone;
     
-    public UserLocation(double latitude, double longitude) throws InvalidInputException {
+    public UserLocation(double latitude, double longitude, TimeZone timeZone) throws InvalidInputException {
         this.setLatitude(latitude);
         this.setLongitude(longitude);
+        this.setTimeZone(timeZone);
     }
 
     public double getLongitude() {
@@ -30,5 +35,13 @@ public class UserLocation {
             throw new InvalidInputException("Latitude must be between -90.0 and 90.0.");
         }
         this.latitude = latitude;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = Objects.requireNonNull(timeZone);
     }
 }

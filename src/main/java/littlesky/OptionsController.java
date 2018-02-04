@@ -15,9 +15,7 @@ public class OptionsController implements Initializable {
     private Stage ownStage;
 
     @FXML
-    private TextField latitudeTextField;
-    @FXML
-    private TextField longitudeTextField;
+    private LocationFormController locationFormController;
     @FXML
     private TextField openWeatherMapApiKeyTextField;
     @FXML
@@ -32,6 +30,7 @@ public class OptionsController implements Initializable {
         this.options.getHttpProxyPort().ifPresent(port -> {
             this.httpProxyPortTextField.setText(String.valueOf(port));
         });
+        this.locationFormController.setUserLocation(this.options.getUserLocation());
     }
     
     @FXML
@@ -39,11 +38,8 @@ public class OptionsController implements Initializable {
         UserLocation location;
         try {
             this.options.validateHttpProxyPort(this.httpProxyPortTextField.getText());
-
-            double latitude = this.parseLatitude();
-            double longitude = this.parseLongitude();
             
-            location = new UserLocation(latitude, longitude);
+            location = this.locationFormController.getUserLocation();
         } catch (InvalidInputException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
             alert.setTitle("Error");
@@ -60,22 +56,6 @@ public class OptionsController implements Initializable {
 
         this.options.save();
         this.ownStage.close();
-    }
-    
-    private double parseLatitude() throws InvalidInputException {
-        try {
-            return Double.parseDouble(this.latitudeTextField.getText());
-        } catch (NumberFormatException e) {
-            throw new InvalidInputException("Latitude must be decimal.");
-        }
-    }
-
-    private double parseLongitude() throws InvalidInputException {
-        try {
-            return Double.parseDouble(this.longitudeTextField.getText());
-        } catch (NumberFormatException e) {
-            throw new InvalidInputException("Longitude must be decimal.");
-        }
     }
     
     @FXML
