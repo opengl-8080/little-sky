@@ -23,6 +23,6 @@
       <TextField fx:id="latitudeTextField" promptText="between -90.0 and 90.0" GridPane.columnIndex="1" />
       <TextField fx:id="longitudeTextField" promptText="between -180.0 and 180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <Label styleClass="input__label" text="Time zone" GridPane.rowIndex="2" />
-      <ComboBox fx:id="timeZoneComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <ComboBox fx:id="timeZoneComboBox" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    </children>
 </GridPane>

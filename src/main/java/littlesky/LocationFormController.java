@@ -1,6 +1,8 @@
 package littlesky;
 
 import javafx.beans.binding.BooleanBinding;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -21,9 +23,13 @@ public class LocationFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String[] availableIDs = TimeZone.getAvailableIDs();
-        for (String availableID : availableIDs) {
-            timeZoneComboBox.getItems().add(availableID);
-        }
+        ObservableList<String> availableIDList = FXCollections.observableArrayList(availableIDs);
+        this.timeZoneComboBox.setItems(availableIDList);
+        this.timeZoneComboBox.getEditor().textProperty().addListener((value, oldValue, userInput) -> {
+            availableIDList.stream().filter(id -> id.toUpperCase().contains(userInput.toUpperCase())).findFirst().ifPresent(firstMatched -> {
+                this.timeZoneComboBox.getSelectionModel().select(firstMatched);
+            });
+        });
     }
     
     public UserLocation getUserLocation() throws InvalidInputException {
