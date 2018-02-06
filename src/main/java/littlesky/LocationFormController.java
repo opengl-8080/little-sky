@@ -3,6 +3,7 @@ package littlesky;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -18,22 +19,30 @@ public class LocationFormController implements Initializable {
     @FXML
     private TextField longitudeTextField;
     @FXML
+    private TextField timeZoneFilterTextField;
+    @FXML
     private ComboBox<String> timeZoneComboBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String[] availableIDs = TimeZone.getAvailableIDs();
         ObservableList<String> availableIDList = FXCollections.observableArrayList(availableIDs);
-        this.timeZoneComboBox.setItems(availableIDList);
-        this.timeZoneComboBox.getEditor().textProperty().addListener((value, oldValue, userInput) -> {
-            availableIDList.stream().filter(id -> id.toUpperCase().contains(userInput.toUpperCase())).findFirst().ifPresent(firstMatched -> {
-                this.timeZoneComboBox.getSelectionModel().select(firstMatched);
-            });
+        FilteredList<String> filtered = availableIDList.filtered(zoneId -> true);
+        this.timeZoneComboBox.setItems(filtered);
+        
+        this.timeZoneFilterTextField.textProperty().addListener((observable, oldValue, userInput) -> {
+            filtered.setPredicate(zoneId -> zoneId.toUpperCase().contains(userInput.toUpperCase()));
+            if (!filtered.contains(this.timeZoneComboBox.getValue())) {
+                this.timeZoneComboBox.getSelectionModel().select("");
+            }
         });
     }
     
     public UserLocation getUserLocation() throws InvalidInputException {
         String timeZoneId = this.timeZoneComboBox.getValue();
+        if (timeZoneId.isEmpty()) {
+            throw new InvalidInputException("Time zone is required.");
+        }
         TimeZone timeZone = TimeZone.getTimeZone(timeZoneId);
         return new UserLocation(this.parseLatitude(), this.parseLongitude(), timeZone);
     }
@@ -47,7 +56,8 @@ public class LocationFormController implements Initializable {
     
     public BooleanBinding isNotEmpty() {
         return this.latitudeTextField.textProperty().isNotEmpty()
-                .and(this.longitudeTextField.textProperty().isNotEmpty());
+                .and(this.longitudeTextField.textProperty().isNotEmpty())
+                .and(this.timeZoneComboBox.valueProperty().asString().isNotEmpty());
     }
 
     private double parseLatitude() throws InvalidInputException {

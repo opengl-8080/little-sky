@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,7 +28,7 @@ public class Dialog {
             textArea.setText(stringWriter.toString());
 
             alert.getDialogPane().setExpandableContent(textArea);
-
+            
             alert.showAndWait();
         });
     }
