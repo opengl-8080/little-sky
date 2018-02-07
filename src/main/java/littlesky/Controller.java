@@ -73,7 +73,7 @@ public class Controller implements Initializable {
     }
     
     private void replaceClockAndWeather(Clock newClock, Weather weather) {
-        SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, newClock, weather);
+        SkyColor skyColor = new SkyColor(this.options.getUserLocation(), newClock, weather);
 
         TimeLabelViewModel timeLabelViewModel = new TimeLabelViewModel();
         timeLabelViewModel.bind(newClock, skyColor);

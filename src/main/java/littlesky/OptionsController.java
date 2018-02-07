@@ -41,10 +41,7 @@ public class OptionsController implements Initializable {
             
             location = this.locationFormController.getUserLocation();
         } catch (InvalidInputException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.showAndWait();
+            Dialog.warn(e);
             return;
         }
 

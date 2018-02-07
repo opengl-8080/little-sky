@@ -1,6 +1,7 @@
 package littlesky;
 
 import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
+import com.luckycatlabs.sunrisesunset.dto.Location;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,10 +14,11 @@ public class SunriseSunsetTime {
     private final TimeZone timeZone;
     private final SunriseSunsetCalculator calculator;
     
-    public SunriseSunsetTime(City city, LocalDate localDate) {
+    public SunriseSunsetTime(UserLocation userLocation, LocalDate localDate) {
         this.localDate = localDate;
-        this.timeZone = city.timeZone();
-        this.calculator = new SunriseSunsetCalculator(city.location(), this.timeZone);
+        this.timeZone = userLocation.getTimeZone();
+        Location location = new Location(userLocation.getLatitude(), userLocation.getLongitude());
+        this.calculator = new SunriseSunsetCalculator(location, this.timeZone);
     }
     
     public LocalTime sunriseTime() {

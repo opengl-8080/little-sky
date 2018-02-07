@@ -1,13 +1,18 @@
 package littlesky;
 
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+
 import java.util.Objects;
 import java.util.TimeZone;
 
 public class UserLocation {
     
-    private double longitude;
-    private double latitude;
-    private TimeZone timeZone;
+    private ReadOnlyDoubleWrapper longitude = new ReadOnlyDoubleWrapper();
+    private ReadOnlyDoubleWrapper latitude = new ReadOnlyDoubleWrapper();
+    private ReadOnlyObjectWrapper<TimeZone> timeZone = new ReadOnlyObjectWrapper<>();
     
     public UserLocation(double latitude, double longitude, TimeZone timeZone) throws InvalidInputException {
         this.setLatitude(latitude);
@@ -16,32 +21,44 @@ public class UserLocation {
     }
 
     public double getLongitude() {
-        return longitude;
+        return longitude.get();
     }
 
     public void setLongitude(double longitude) {
         if (longitude < -180.0 || 180.0 < longitude) {
             throw new InvalidInputException("Longitude must be between -180.0 and 180.0.");
         }
-        this.longitude = longitude;
+        this.longitude.set(longitude);
+    }
+
+    public ReadOnlyDoubleProperty longitudeProperty() {
+        return this.longitude.getReadOnlyProperty();
     }
 
     public double getLatitude() {
-        return latitude;
+        return latitude.get();
     }
 
     public void setLatitude(double latitude) {
         if (latitude < -90.0 || 90.0 < latitude) {
             throw new InvalidInputException("Latitude must be between -90.0 and 90.0.");
         }
-        this.latitude = latitude;
+        this.latitude.set(latitude);
+    }
+
+    public ReadOnlyDoubleProperty latitudeProperty() {
+        return this.latitude.getReadOnlyProperty();
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return timeZone.get();
     }
 
     public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = Objects.requireNonNull(timeZone);
+        this.timeZone.set(Objects.requireNonNull(timeZone));
+    }
+    
+    public ReadOnlyObjectProperty<TimeZone> timeZoneProperty() {
+        return this.timeZone.getReadOnlyProperty();
     }
 }

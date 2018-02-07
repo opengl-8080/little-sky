@@ -113,7 +113,7 @@ public class DebugDialogController implements Initializable {
         this.skyColorSimulationHBox.getChildren().clear();
         
         SimulationClock simulationClock = new SimulationClock(this.debugClock.getDate(), LocalTime.MIN);
-        SkyColor skyColor = new SkyColor(JapaneseCity.OSAKA, simulationClock, this.debugWeather);
+        SkyColor skyColor = new SkyColor(Options.getInstance().getUserLocation(), simulationClock, this.debugWeather);
         
         LocalTime time = LocalTime.MIN;
         while (time.equals(LocalTime.MAX) || time.isBefore(LocalTime.MAX)) {

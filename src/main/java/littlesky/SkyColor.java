@@ -20,11 +20,11 @@ public class SkyColor {
     private final ObjectProperty<SkyColorGradation> gradationProperty = new SimpleObjectProperty<>(new SkyColorGradation());
     private final Weather weather;
     
-    public SkyColor(City city, Clock clock, Weather weather) {
+    public SkyColor(UserLocation userLocation, Clock clock, Weather weather) {
         this.weather = weather;
         this.gradationProperty.bind(
-            binding(clock.dateProperty())
-            .computeValue(() -> createGradation(city, clock.getDate()))
+            binding(clock.dateProperty(), userLocation.latitudeProperty(), userLocation.longitudeProperty(), userLocation.timeZoneProperty())
+            .computeValue(() -> createGradation(userLocation, clock.getDate()))
         );
         
         this.color.bind(
@@ -40,8 +40,8 @@ public class SkyColor {
         return baseSkyColor.deriveColor(0, saturationFactor, brightnessFactor, 1.0);
     }
 
-    private SkyColorGradation createGradation(City city, LocalDate date) {
-        SunriseSunsetTime sunriseSunsetTime = new SunriseSunsetTime(city, date);
+    private SkyColorGradation createGradation(UserLocation userLocation, LocalDate date) {
+        SunriseSunsetTime sunriseSunsetTime = new SunriseSunsetTime(userLocation, date);
         LocalTime sunriseTime = sunriseSunsetTime.sunriseTime();
         LocalTime sunsetTime = sunriseSunsetTime.sunsetTime();
 

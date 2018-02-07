@@ -28,7 +28,10 @@ public class Dialog {
             textArea.setText(stringWriter.toString());
 
             alert.getDialogPane().setExpandableContent(textArea);
-            
+
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+
             alert.showAndWait();
         });
     }
@@ -38,6 +41,9 @@ public class Dialog {
             Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage(), ButtonType.OK);
             alert.setHeaderText(null);
             alert.setTitle("Invalid input");
+
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
 
             alert.showAndWait();
         });
