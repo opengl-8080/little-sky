@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="10.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.SetupController">
+<VBox spacing="10.0" style="-fx-padding: 10;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.controller.setup.SetupController">
    <children>
       <fx:include fx:id="locationForm" source="location-form.fxml" />
       <HBox alignment="CENTER">

@@ -8,6 +8,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import littlesky.controller.main.Controller;
+import littlesky.controller.setup.SetupController;
+import littlesky.model.option.Options;
+import littlesky.view.Dialog;
 
 import java.io.IOException;
 
