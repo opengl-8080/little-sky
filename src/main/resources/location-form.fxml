@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="input__grid" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.controller.option.LocationFormController">
   <columnConstraints>
@@ -19,9 +20,24 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label styleClass="input__label" text="Latitude" />
-      <Label styleClass="input__label" text="Longitude" GridPane.rowIndex="1" />
-      <Label styleClass="input__label" text="Time zone" GridPane.rowIndex="2" />
+      <VBox>
+         <children>
+            <Label styleClass="input__label" text="Latitude" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="input__required-label" text="required" />
+         </children>
+      </VBox>
+      <VBox GridPane.rowIndex="1">
+         <children>
+            <Label styleClass="input__label" text="Longitude" />
+            <Label styleClass="input__required-label" text="required" />
+         </children>
+      </VBox>
+      <VBox GridPane.rowIndex="2">
+         <children>
+            <Label styleClass="input__label" text="Time zone" />
+            <Label styleClass="input__required-label" text="required" />
+         </children>
+      </VBox>
        <TextField fx:id="latitudeTextField" promptText="between -90.0 and 90.0" GridPane.columnIndex="1" />
        <TextField fx:id="longitudeTextField" promptText="between -180.0 and 180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
        <TextField fx:id="timeZoneFilterTextField" promptText="Time zone filter" GridPane.columnIndex="1" GridPane.rowIndex="2" />

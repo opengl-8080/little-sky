@@ -4,6 +4,11 @@
     -fx-max-height: 999999999999999;
 }
 
+.input__required-label {
+    -fx-font-size: 10;
+    -fx-text-fill: red;
+}
+
 .input__grid {
     -fx-hgap: 10;
     -fx-vgap: 10;

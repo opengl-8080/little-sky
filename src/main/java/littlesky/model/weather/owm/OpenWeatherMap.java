@@ -84,6 +84,9 @@ public class OpenWeatherMap extends WeatherBase {
     }
 
     public void stop() {
+        if (!this.isRunning()) {
+            return;
+        }
         updateRunning(false);
         this.executor.shutdown();
         this.executor.shutdownNow();
