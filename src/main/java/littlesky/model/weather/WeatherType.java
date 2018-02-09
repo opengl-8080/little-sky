@@ -1,8 +1,8 @@
 package littlesky.model.weather;
 
-import java.net.URL;
+import java.io.InputStream;
 
 public interface WeatherType {
-    URL getIcon();
+    InputStream getIconStream();
     boolean isSunny();
 }

@@ -4,8 +4,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.image.Image;
 import littlesky.model.moon.MoonPhase;
-import littlesky.model.weather.WeatherType;
 import littlesky.model.weather.Weather;
+import littlesky.model.weather.WeatherType;
 
 import static littlesky.util.BindingBuilder.*;
 
@@ -21,7 +21,7 @@ public class SkyStatusIconViewModel {
                 if (weatherType.isSunny()) {
                     return this.getMoonImage(moonPhase);
                 } else {
-                    return new Image(weatherType.getIcon().toString());
+                    return new Image(weatherType.getIconStream());
                 }
             })
         );

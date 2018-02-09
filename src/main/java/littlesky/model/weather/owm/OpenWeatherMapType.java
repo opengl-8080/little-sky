@@ -1,8 +1,13 @@
 package littlesky.model.weather.owm;
 
+import littlesky.model.option.Options;
 import littlesky.model.weather.WeatherType;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 
 public class OpenWeatherMapType implements WeatherType {
@@ -12,6 +17,7 @@ public class OpenWeatherMapType implements WeatherType {
     
     private final int conditionCode;
     private final String iconId;
+    private final Options options = Options.getInstance();
 
     public OpenWeatherMapType(int conditionCode, String iconId) {
         this.conditionCode = conditionCode;
@@ -19,11 +25,14 @@ public class OpenWeatherMapType implements WeatherType {
     }
 
     @Override
-    public URL getIcon() {
+    public InputStream getIconStream() {
         try {
-            return new URL("http://openweathermap.org/img/w/" + this.iconId + ".png");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            URL url = new URL("http://openweathermap.org/img/w/" + this.iconId + ".png");
+            Proxy proxy = this.options.getHttpProxy();
+            HttpURLConnection con = (HttpURLConnection)url.openConnection(proxy);
+            return con.getInputStream();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 

@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Properties;
@@ -84,6 +86,14 @@ public class Options {
 
     public void setHttpProxyPort(String value) {
         this.properties.put(HTTP_PROXY_PORT, defaultEmpty(value).isEmpty() ? "" : value);
+    }
+    
+    public Proxy getHttpProxy() {
+        return this.getHttpProxyHost().map(host -> {
+            int port = this.getHttpProxyPort().orElse(80);
+            InetSocketAddress proxyAddress = new InetSocketAddress(host, port);
+            return new Proxy(Proxy.Type.HTTP, proxyAddress);
+        }).orElse(Proxy.NO_PROXY);
     }
     
     public void validateHttpProxyPort(String value) throws InvalidInputException {

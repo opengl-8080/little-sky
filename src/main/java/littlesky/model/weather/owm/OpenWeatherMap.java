@@ -5,17 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
-import littlesky.view.Dialog;
-import littlesky.model.option.Options;
 import littlesky.model.location.UserLocation;
+import littlesky.model.option.Options;
 import littlesky.model.weather.WeatherBase;
 import littlesky.model.weather.WeatherType;
+import littlesky.view.Dialog;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
@@ -52,7 +51,6 @@ public class OpenWeatherMap extends WeatherBase {
         if (this.isRunning()) {
             throw new IllegalStateException("OpenWeatherMap service thread already started.");
         }
-        System.out.println("start service");
         
         URL url = this.buildRequestUrl();
 
@@ -65,7 +63,6 @@ public class OpenWeatherMap extends WeatherBase {
 
         updateRunning(true);
         this.executor.scheduleWithFixedDelay(() -> {
-            System.out.println("request");
 
             try {
                 ResponseRoot root = withRetry(() -> tryRequest(url));
@@ -125,7 +122,7 @@ public class OpenWeatherMap extends WeatherBase {
     }
     
     private ResponseRoot tryRequest(URL url) throws IOException {
-        Proxy proxy = this.createProxy();
+        Proxy proxy = this.options.getHttpProxy();
         HttpURLConnection con = (HttpURLConnection)url.openConnection(proxy);
         int status = con.getResponseCode();
         if (status == 200) {
@@ -135,14 +132,6 @@ public class OpenWeatherMap extends WeatherBase {
         } else {
             throw new RuntimeException("http response status=" + con.getResponseCode() + ", message=" + con.getResponseMessage());
         }
-    }
-    
-    private Proxy createProxy() {
-        return this.options.getHttpProxyHost().map(host -> {
-            int port = this.options.getHttpProxyPort().orElse(80);
-            InetSocketAddress proxyAddress = new InetSocketAddress(host, port);
-            return new Proxy(Proxy.Type.HTTP, proxyAddress);
-        }).orElse(Proxy.NO_PROXY);
     }
     
     private ResponseRoot parseResponse(HttpURLConnection con) throws IOException {
