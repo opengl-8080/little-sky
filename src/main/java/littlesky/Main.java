@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import littlesky.controller.main.Controller;
+import littlesky.controller.main.MainController;
 import littlesky.controller.setup.SetupController;
 import littlesky.model.option.Options;
 import littlesky.view.Dialog;
@@ -57,8 +57,8 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/main.fxml"));
         Parent root = loader.load();
 
-        Controller controller = loader.getController();
-        controller.setPrimaryStage(primaryStage);
+        MainController mainController = loader.getController();
+        mainController.setPrimaryStage(primaryStage);
 
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);

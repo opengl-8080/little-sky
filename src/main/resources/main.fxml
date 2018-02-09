@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<HBox fx:id="backgroundSkyHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" spacing="10.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10; -fx-padding: 5;" xmlns="http://javafx.com/javafx/8.0.162" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.controller.main.Controller">
+<HBox fx:id="backgroundSkyHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" spacing="10.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10; -fx-padding: 5;" xmlns="http://javafx.com/javafx/8.0.162" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.controller.main.MainController">
    <children>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
          <center>
