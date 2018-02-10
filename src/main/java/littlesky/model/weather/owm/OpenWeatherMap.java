@@ -122,7 +122,8 @@ public class OpenWeatherMap extends WeatherBase {
     }
     
     private ResponseRoot tryRequest(URL url) throws IOException {
-        Proxy proxy = this.options.getHttpProxy();
+        Proxy proxy = this.options.getHttpProxy().toProxy();
+        System.out.println("proxy=" + proxy);
         HttpURLConnection con = (HttpURLConnection)url.openConnection(proxy);
         int status = con.getResponseCode();
         if (status == 200) {

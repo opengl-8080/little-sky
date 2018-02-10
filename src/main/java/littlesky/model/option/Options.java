@@ -2,7 +2,7 @@ package littlesky.model.option;
 
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import littlesky.InvalidInputException;
+import littlesky.model.http.HttpProxy;
 import littlesky.model.location.UserLocation;
 
 import java.io.FileInputStream;
@@ -11,10 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -30,7 +27,7 @@ public class Options {
     
     private static final String ALWAYS_ON_TOP = "always-on-top";
     private static final Options instance = new Options();
-    
+
     public static Options getInstance() {
         return instance;
     }
@@ -50,18 +47,18 @@ public class Options {
             throw new UncheckedIOException(e);
         }
     }
-    
-    
-    public void put(String key, String value) {
-        this.properties.put(key, value);
+
+    private void put(String key, Object value) {
+        if (value == null) {
+            this.properties.remove(key);
+        } else {
+            this.properties.put(key, value.toString());
+        }
     }
     
     public String get(String key) {
         return (String) this.properties.get(key);
     }
-    
-    
-    
     
     public void setOpenWeatherMapApiKey(String apiKey) {
         this.properties.put(OPEN_WEATHER_MAP_API_KEY, apiKey);
@@ -76,40 +73,18 @@ public class Options {
         return this.openWeatherMapApiKey.getReadOnlyProperty();
     }
     
-    public void setHttpProxyHost(String host) {
-        this.properties.put(HTTP_PROXY_HOST, host);
-    }
-    
-    public Optional<String> getHttpProxyHost() {
-        return Optional.ofNullable(this.getString(HTTP_PROXY_HOST));
-    }
-
-    public void setHttpProxyPort(String value) {
-        this.properties.put(HTTP_PROXY_PORT, defaultEmpty(value).isEmpty() ? "" : value);
-    }
-    
-    public Proxy getHttpProxy() {
-        return this.getHttpProxyHost().map(host -> {
-            int port = this.getHttpProxyPort().orElse(80);
-            InetSocketAddress proxyAddress = new InetSocketAddress(host, port);
-            return new Proxy(Proxy.Type.HTTP, proxyAddress);
-        }).orElse(Proxy.NO_PROXY);
-    }
-    
-    public void validateHttpProxyPort(String value) throws InvalidInputException {
-        String text = defaultEmpty(value);
-        if (!text.isEmpty() && !text.matches("\\d+")) {
-            throw new InvalidInputException("Http Proxy Port must be number.");
-        }
+    public HttpProxy getHttpProxy() {
+        String host = this.get(HTTP_PROXY_HOST);
+        String textPort = this.get(HTTP_PROXY_PORT);
+        Integer port = textPort == null || textPort.isEmpty() ? null : Integer.valueOf(textPort);
+        return new HttpProxy(host, port);
     }
 
-    public OptionalInt getHttpProxyPort() {
-        Integer value = this.getInt(HTTP_PROXY_PORT);
-        if (value == null) {
-            return OptionalInt.empty();
-        } else {
-            return OptionalInt.of(value);
-        }
+    public void setHttpProxy(HttpProxy httpProxy) {
+        String host = httpProxy.getHost().orElse(null);
+        this.put(HTTP_PROXY_HOST, host);
+        Integer port = httpProxy.getPort().orElse(null);
+        this.put(HTTP_PROXY_PORT, port);
     }
     
     public void setAlwaysOnTop(boolean flag) {
@@ -169,10 +144,6 @@ public class Options {
         return TimeZone.getTimeZone(timeZoneId);
     }
 
-    private String defaultEmpty(String text) {
-        return text == null ? "" : text;
-    }
-
     public void save() {
         try (OutputStream outputStream = new FileOutputStream(CONFIG_FILE)) {
             this.properties.storeToXML(outputStream, "littkesky", "UTF-8");
@@ -188,23 +159,5 @@ public class Options {
         }
         String string = (String)value;
         return string.isEmpty() ? null : string;
-    }
-    
-    private Integer getInt(String key) {
-        String text = this.getString(key);
-        if (text == null) {
-            return null;
-        } else {
-            return Integer.valueOf(text);
-        }
-    }
-    
-    private Double getDouble(String key) {
-        String text = this.getString(key);
-        if (text == null) {
-            return null;
-        } else {
-            return Double.valueOf(text);
-        }
     }
 }

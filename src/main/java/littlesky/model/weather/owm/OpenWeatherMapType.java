@@ -28,7 +28,7 @@ public class OpenWeatherMapType implements WeatherType {
     public InputStream getIconStream() {
         try {
             URL url = new URL("http://openweathermap.org/img/w/" + this.iconId + ".png");
-            Proxy proxy = this.options.getHttpProxy();
+            Proxy proxy = this.options.getHttpProxy().toProxy();
             HttpURLConnection con = (HttpURLConnection)url.openConnection(proxy);
             return con.getInputStream();
         } catch (IOException e) {
