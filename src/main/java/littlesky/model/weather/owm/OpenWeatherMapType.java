@@ -40,4 +40,13 @@ public class OpenWeatherMapType implements WeatherType {
     public boolean isSunny() {
         return 800 <= this.conditionCode && this.conditionCode < 900;
     }
+
+    @Override
+    public String toString() {
+        return "OpenWeatherMapType{" +
+                "conditionCode=" + conditionCode +
+                ", iconId='" + iconId + '\'' +
+                ", options=" + options +
+                '}';
+    }
 }

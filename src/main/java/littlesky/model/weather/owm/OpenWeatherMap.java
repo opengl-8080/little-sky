@@ -9,6 +9,7 @@ import littlesky.model.location.UserLocation;
 import littlesky.model.option.Options;
 import littlesky.model.weather.WeatherBase;
 import littlesky.model.weather.WeatherType;
+import littlesky.util.Logger;
 import littlesky.view.Dialog;
 
 import java.io.IOException;
@@ -24,10 +25,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class OpenWeatherMap extends WeatherBase {
+    private static final Logger logger = Logger.getInstance();
+    
     private static final int MAX_RETRY_COUNT = 3;
     private static final double ABSOLUTE_ZERO = -273.15;
     private static final int RETRY_WAIT_SECONDS = 5;
+
+    private static final int REQUEST_INITIAL_DELAY = 0;
+    private static final int REQUEST_DELAY_AMOUNT = 15;
+    private static final TimeUnit REQUEST_DELAY_TIME_UNIT = TimeUnit.MINUTES;
+    
+    private static final WeatherType DEFAULT_WEATHER_TYPE = OpenWeatherMapType.SUNNY;
+    private static final double DEFAULT_TEMPERATURE = 15.0;
+    private static final double DEFAULT_CLOUD_RATE = 0.0;
+    
     private static final OpenWeatherMap instance = new OpenWeatherMap();
+    
     public static OpenWeatherMap getInstance() {
         return instance;
     }
@@ -42,9 +55,9 @@ public class OpenWeatherMap extends WeatherBase {
     }
 
     private void initStatus() {
-        this.updateWeatherType(OpenWeatherMapType.SUNNY);
-        this.updateTemperature(15.0);
-        this.updateCloudRate(0.0);
+        this.updateWeatherType(DEFAULT_WEATHER_TYPE);
+        this.updateTemperature(DEFAULT_TEMPERATURE);
+        this.updateCloudRate(DEFAULT_CLOUD_RATE);
     }
     
     public void start() {
@@ -71,13 +84,18 @@ public class OpenWeatherMap extends WeatherBase {
                 updateTemperature(root.getTemperature());
                 updateCloudRate(root.getCloudRate());
 
+                logger.debug(() -> 
+                       "weatherType=" + root.getWeatherType()
+                     + ", temperature=" + root.getTemperature()
+                     + ", cloudRate=" + root.getCloudRate()
+                );
             } catch (InterruptedException e) {
                 this.stop();
             } catch (Exception e) {
                 this.stop();
                 Dialog.error(e);
             }
-        }, 0, 15, TimeUnit.MINUTES);
+        }, REQUEST_INITIAL_DELAY, REQUEST_DELAY_AMOUNT, REQUEST_DELAY_TIME_UNIT);
     }
 
     public void stop() {
@@ -122,8 +140,8 @@ public class OpenWeatherMap extends WeatherBase {
     }
     
     private ResponseRoot tryRequest(URL url) throws IOException {
+        logger.debug("try request");
         Proxy proxy = this.options.getHttpProxy().toProxy();
-        System.out.println("proxy=" + proxy);
         HttpURLConnection con = (HttpURLConnection)url.openConnection(proxy);
         int status = con.getResponseCode();
         if (status == 200) {

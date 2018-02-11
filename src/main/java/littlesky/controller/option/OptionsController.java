@@ -2,6 +2,7 @@ package littlesky.controller.option;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import littlesky.InvalidInputException;
@@ -22,17 +23,23 @@ public class OptionsController implements Initializable {
     @FXML
     private TextField openWeatherMapApiKeyTextField;
     @FXML
-    private TextField httpProxyHostTextField;
+    private TextField proxyHostTextField;
     @FXML
-    private TextField httpProxyPortTextField;
+    private TextField proxyPortTextField;
+    @FXML
+    private TextField proxyUserNameTextField;
+    @FXML
+    private PasswordField proxyPasswordField;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.openWeatherMapApiKeyTextField.setText(this.options.getOpenWeatherMapApiKey().orElse(""));
 
         HttpProxy httpProxy = this.options.getHttpProxy();
-        httpProxy.getHost().ifPresent(this.httpProxyHostTextField::setText);
-        httpProxy.getPort().map(String::valueOf).ifPresent(this.httpProxyPortTextField::setText);
+        httpProxy.getHost().ifPresent(this.proxyHostTextField::setText);
+        httpProxy.getPort().map(String::valueOf).ifPresent(this.proxyPortTextField::setText);
+        httpProxy.getUsername().ifPresent(this.proxyUserNameTextField::setText);
+        httpProxy.getPassword().ifPresent(this.proxyPasswordField::setText);
         
         this.locationFormController.setUserLocation(this.options.getUserLocation());
     }
@@ -42,7 +49,12 @@ public class OptionsController implements Initializable {
         UserLocation location;
         HttpProxy httpProxy;
         try {
-            httpProxy = new HttpProxy(this.httpProxyHostTextField.getText(), this.parseHttpProxyPort());
+            httpProxy = new HttpProxy(
+                this.proxyHostTextField.getText(),
+                this.parseHttpProxyPort(),
+                this.proxyUserNameTextField.getText(),
+                this.proxyPasswordField.getText()
+            );
             location = this.locationFormController.getUserLocation();
         } catch (InvalidInputException e) {
             Dialog.warn(e);
@@ -59,7 +71,7 @@ public class OptionsController implements Initializable {
     }
     
     private Integer parseHttpProxyPort() {
-        String text = this.httpProxyPortTextField.getText();
+        String text = this.proxyPortTextField.getText();
         if (text == null || text.isEmpty()) {
             return null;
         }

@@ -21,6 +21,8 @@ public class Options {
     private static final String OPEN_WEATHER_MAP_API_KEY = "open-weather-map-api-key";
     private static final String HTTP_PROXY_HOST = "http-proxy.host";
     private static final String HTTP_PROXY_PORT = "http-proxy.port";
+    private static final String HTTP_PROXY_USERNAME = "http-proxy.username";
+    private static final String HTTP_PROXY_PASSWORD = "http-proxy.password";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
     private static final String TIME_ZONE_ID = "time-zone-id";
@@ -76,8 +78,10 @@ public class Options {
     public HttpProxy getHttpProxy() {
         String host = this.get(HTTP_PROXY_HOST);
         String textPort = this.get(HTTP_PROXY_PORT);
+        String username = this.get(HTTP_PROXY_USERNAME);
+        String password = this.get(HTTP_PROXY_PASSWORD);
         Integer port = textPort == null || textPort.isEmpty() ? null : Integer.valueOf(textPort);
-        return new HttpProxy(host, port);
+        return new HttpProxy(host, port, username, password);
     }
 
     public void setHttpProxy(HttpProxy httpProxy) {
@@ -85,6 +89,10 @@ public class Options {
         this.put(HTTP_PROXY_HOST, host);
         Integer port = httpProxy.getPort().orElse(null);
         this.put(HTTP_PROXY_PORT, port);
+        String username = httpProxy.getUsername().orElse(null);
+        this.put(HTTP_PROXY_USERNAME, username);
+        String password = httpProxy.getPassword().orElse(null);
+        this.put(HTTP_PROXY_PASSWORD, password);
     }
     
     public void setAlwaysOnTop(boolean flag) {
