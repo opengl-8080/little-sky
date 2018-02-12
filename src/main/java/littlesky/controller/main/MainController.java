@@ -58,31 +58,45 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resources) {
+        this.initInstances();
+        this.initEventListeners();
+        this.initMenuItems();
+        this.initServices();
+        this.replaceClockAndWeather(this.realTimeClock, this.openWeatherMap);
+    }
+    
+    private void initInstances() {
         this.options = Options.getInstance();
         this.debugDialog = new DebugDialog();
         this.optionsWindow = new OptionsWindow();
         this.moonPhase = new MoonPhase();
         this.openWeatherMap = OpenWeatherMap.getInstance();
-        if (this.options.getOpenWeatherMapApiKey().isPresent()) {
-            this.openWeatherMap.start();
-        }
-        
         this.realTimeClock = new RealTimeClock();
-        this.replaceClockAndWeather(this.realTimeClock, this.openWeatherMap);
-        this.realTimeClock.start();
-        
+    }
+    
+    private void initMenuItems() {
         this.alwaysOnTopMenuItem.setSelected(this.options.isAlwaysOnTop());
 
+        BooleanBinding enableStartWeatherService
+                = this.openWeatherMap.runningProperty().not()
+                .and(this.options.getOpenWeatherMapApiKeyProperty().isNotEmpty());
+        this.startWeatherServiceMenuItem.disableProperty().bind(enableStartWeatherService.not());
+        this.stopWeatherServiceMenuItem.disableProperty().bind(this.openWeatherMap.runningProperty().not());
+    }
+    
+    private void initEventListeners() {
         this.options.getOpenWeatherMapApiKeyProperty().addListener((v, o, n) -> {
             if (n.isEmpty()) {
                 this.stopWeatherService();
             }
         });
-        BooleanBinding enableStartWeatherService
-                = this.openWeatherMap.runningProperty().not()
-                    .and(this.options.getOpenWeatherMapApiKeyProperty().isNotEmpty());
-        this.startWeatherServiceMenuItem.disableProperty().bind(enableStartWeatherService.not());
-        this.stopWeatherServiceMenuItem.disableProperty().bind(this.openWeatherMap.runningProperty().not());
+    }
+    
+    private void initServices() {
+        this.realTimeClock.start();
+        if (this.options.getOpenWeatherMapApiKey().isPresent()) {
+            this.openWeatherMap.start();
+        }
     }
     
     private void replaceClockAndWeather(Clock newClock, Weather weather) {
