@@ -31,6 +31,7 @@ public class LocationFormController implements Initializable {
         ObservableList<String> availableIDList = FXCollections.observableArrayList(availableIDs);
         FilteredList<String> filtered = availableIDList.filtered(zoneId -> true);
         this.timeZoneComboBox.setItems(filtered);
+        this.timeZoneComboBox.setValue("");
         
         this.timeZoneFilterTextField.textProperty().addListener((observable, oldValue, userInput) -> {
             filtered.setPredicate(zoneId -> zoneId.toUpperCase().contains(userInput.toUpperCase()));
