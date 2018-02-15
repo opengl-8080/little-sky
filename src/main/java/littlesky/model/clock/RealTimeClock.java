@@ -28,7 +28,9 @@ public class RealTimeClock extends ClockBase {
     
     private void updateDateTime() {
         LocalDateTime now = LocalDateTime.now();
-        this.date.set(now.toLocalDate());
+        if (this.getDate() == null || !this.getDate().equals(now.toLocalDate())) {
+            this.date.set(now.toLocalDate());
+        }
         this.time.set(now.toLocalTime());
     }
 }

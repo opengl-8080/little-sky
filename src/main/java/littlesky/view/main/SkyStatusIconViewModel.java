@@ -6,10 +6,12 @@ import javafx.scene.image.Image;
 import littlesky.model.moon.MoonPhase;
 import littlesky.model.weather.Weather;
 import littlesky.model.weather.WeatherType;
+import littlesky.util.Logger;
 
 import static littlesky.util.BindingBuilder.*;
 
 public class SkyStatusIconViewModel {
+    private static final Logger logger = Logger.getInstance();
     
     private ReadOnlyObjectWrapper<Image> image = new ReadOnlyObjectWrapper<>();
     
@@ -34,6 +36,7 @@ public class SkyStatusIconViewModel {
     private Image getMoonImage(MoonPhase moonPhase) {
         double phase = moonPhase.getPhase();
         int imageNo = (int)(15*phase);
+        logger.debug(() -> "moon-phase=" + phase + ", imageNo=" + imageNo);
         return new Image("/moon_" + imageNo + ".png");
     }
 }

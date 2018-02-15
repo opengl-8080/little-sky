@@ -9,6 +9,7 @@ import littlesky.model.clock.Clock;
 import littlesky.model.location.UserLocation;
 import littlesky.model.sun.SunriseSunsetTime;
 import littlesky.model.weather.Weather;
+import littlesky.util.Logger;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.time.LocalTime;
 import static littlesky.util.BindingBuilder.*;
 
 public class SkyColor {
+    private static final Logger logger = Logger.getInstance();
     private static final double MIN_SATURATION_AT_FULL_CLOUDY = 0.0;
     private static final double MIN_BRIGHTNESS_AT_FULL_CLOUDY = 0.7;
     
@@ -53,6 +55,8 @@ public class SkyColor {
         Duration sunsetDuration = Duration.between(LocalTime.MIN, sunsetTime);
         Duration noonDuration = sunriseDuration.plus(sunsetDuration).dividedBy(2L);
         LocalTime noonTime = LocalTime.MIN.plus(noonDuration);
+        
+        logger.debug(() -> "date=" + date + ", sunrise=" + sunriseTime + ", sunset=" + sunsetTime + ", noon=" + noonTime);
 
         SkyColorGradation gradation = new SkyColorGradation();
         
