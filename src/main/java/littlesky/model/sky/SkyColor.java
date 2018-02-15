@@ -5,9 +5,9 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
-import littlesky.model.sun.SunriseSunsetTime;
-import littlesky.model.location.UserLocation;
 import littlesky.model.clock.Clock;
+import littlesky.model.location.UserLocation;
+import littlesky.model.sun.SunriseSunsetTime;
 import littlesky.model.weather.Weather;
 
 import java.time.Duration;
@@ -27,7 +27,7 @@ public class SkyColor {
     public SkyColor(UserLocation userLocation, Clock clock, Weather weather) {
         this.weather = weather;
         this.gradationProperty.bind(
-            binding(clock.dateProperty(), userLocation.latitudeProperty(), userLocation.longitudeProperty(), userLocation.timeZoneProperty())
+            binding(clock.dateProperty(), userLocation.latitudeProperty(), userLocation.longitudeProperty())
             .computeValue(() -> createGradation(userLocation, clock.getDate()))
         );
         

@@ -12,12 +12,11 @@ import java.util.TimeZone;
 
 public class SunriseSunsetTime {
     private final LocalDate localDate;
-    private final TimeZone timeZone;
     private final SunriseSunsetCalculator calculator;
+    private final TimeZone timeZone = TimeZone.getDefault();
     
     public SunriseSunsetTime(UserLocation userLocation, LocalDate localDate) {
         this.localDate = localDate;
-        this.timeZone = userLocation.getTimeZone();
         Location location = new Location(userLocation.getLatitude(), userLocation.getLongitude());
         this.calculator = new SunriseSunsetCalculator(location, this.timeZone);
     }

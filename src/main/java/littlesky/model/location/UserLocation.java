@@ -2,23 +2,16 @@ package littlesky.model.location;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import littlesky.InvalidInputException;
-
-import java.util.Objects;
-import java.util.TimeZone;
 
 public class UserLocation {
     
     private ReadOnlyDoubleWrapper longitude = new ReadOnlyDoubleWrapper();
     private ReadOnlyDoubleWrapper latitude = new ReadOnlyDoubleWrapper();
-    private ReadOnlyObjectWrapper<TimeZone> timeZone = new ReadOnlyObjectWrapper<>();
     
-    public UserLocation(double latitude, double longitude, TimeZone timeZone) throws InvalidInputException {
+    public UserLocation(double latitude, double longitude) throws InvalidInputException {
         this.setLatitude(latitude);
         this.setLongitude(longitude);
-        this.setTimeZone(timeZone);
     }
 
     public double getLongitude() {
@@ -49,17 +42,5 @@ public class UserLocation {
 
     public ReadOnlyDoubleProperty latitudeProperty() {
         return this.latitude.getReadOnlyProperty();
-    }
-
-    public TimeZone getTimeZone() {
-        return timeZone.get();
-    }
-
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone.set(Objects.requireNonNull(timeZone));
-    }
-    
-    public ReadOnlyObjectProperty<TimeZone> timeZoneProperty() {
-        return this.timeZone.getReadOnlyProperty();
     }
 }
