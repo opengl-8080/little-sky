@@ -32,9 +32,13 @@ public class MoonPhase {
     }
 
     private double calculatePhase(LocalDate date) {
+        double age = this.calculateAge(date);
+        return age / AVERAGE_OF_MOON_PERIOD;
+    }
+    
+    private double calculateAge(LocalDate date) {
         long days = Math.abs(BASE_DATE.until(date, ChronoUnit.DAYS));
         double normalizedDays = days % METONIC_CYCLE + 0.5; // at noon
-        double age = (AGE_AT_BASE_DATE + normalizedDays) % AVERAGE_OF_MOON_PERIOD;
-        return age / AVERAGE_OF_MOON_PERIOD;
+        return (AGE_AT_BASE_DATE + normalizedDays) % AVERAGE_OF_MOON_PERIOD;
     }
 }

@@ -35,7 +35,7 @@ public class SkyStatusIconViewModel {
     
     private Image getMoonImage(MoonPhase moonPhase) {
         double phase = moonPhase.getPhase();
-        int imageNo = (int)(15*phase);
+        int imageNo = (int)((16*phase)%16);
         logger.debug(() -> "moon-phase=" + phase + ", imageNo=" + imageNo);
         return new Image("/moon_" + imageNo + ".png");
     }
