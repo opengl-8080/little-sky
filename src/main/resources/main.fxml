@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<HBox fx:id="backgroundSkyHBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" spacing="10.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10; -fx-padding: 5;" xmlns="http://javafx.com/javafx/8.0.162" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.controller.main.MainController">
+<HBox fx:id="backgroundSkyHBox" alignment="CENTER" onMouseDragged="#onMouseDragged" onMousePressed="#onMousePressed" prefHeight="46.0" spacing="10.0" style="-fx-border-color: #555 #AAA #DDD #AAA; -fx-border-width: 3; -fx-border-radius: 10; -fx-padding: 5;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="littlesky.controller.main.MainController">
    <children>
-      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+      <BorderPane fx:id="skyStatusIconPane" HBox.hgrow="NEVER">
          <center>
             <ImageView fx:id="skyStatusIconImageView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
@@ -27,13 +27,21 @@
             <ContextMenu>
               <items>
                   <MenuItem mnemonicParsing="false" onAction="#openOptions" text="Opitons" />
+                  <Menu mnemonicParsing="false" text="View">
+                     <items>
+                        <CheckMenuItem fx:id="alwaysOnTopMenuItem" mnemonicParsing="false" onAction="#changeAlwaysOnTop" text="Always on top" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <CheckMenuItem fx:id="showSecondsCheckMenuItem" mnemonicParsing="false" onAction="#changeViewOptions" text="Show seconds" />
+                        <CheckMenuItem fx:id="showTemperatureCheckMenuItem" mnemonicParsing="false" onAction="#changeViewOptions" text="Show temperature" />
+                        <CheckMenuItem fx:id="showSkyStatusIconCheckMenuItem" mnemonicParsing="false" onAction="#changeViewOptions" text="Show sky status icon" />
+                     </items>
+                  </Menu>
                   <Menu mnemonicParsing="false" text="Weather service">
                     <items>
                       <MenuItem fx:id="startWeatherServiceMenuItem" mnemonicParsing="false" onAction="#startWeatherService" text="Start" />
                         <MenuItem fx:id="stopWeatherServiceMenuItem" mnemonicParsing="false" onAction="#stopWeatherService" text="Stop" />
                     </items>
                   </Menu>
-                  <CheckMenuItem fx:id="alwaysOnTopMenuItem" mnemonicParsing="false" onAction="#changeAlwaysOnTop" text="Always on top" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#openDebug" text="Debug" />
                   <SeparatorMenuItem mnemonicParsing="false" />
@@ -42,6 +50,6 @@
             </ContextMenu>
          </contextMenu>
       </Label>
-      <Pane fx:id="temperaturePane" prefWidth="10.0" style="-fx-background-color: red;" />
+      <Pane fx:id="temperaturePane" prefWidth="10.0" style="-fx-background-color: red;" HBox.hgrow="NEVER" />
    </children>
 </HBox>

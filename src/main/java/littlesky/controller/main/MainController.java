@@ -9,22 +9,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import littlesky.view.main.BackgroundSkyViewModel;
-import littlesky.view.debug.DebugDialog;
-import littlesky.model.moon.MoonPhase;
-import littlesky.model.weather.owm.OpenWeatherMap;
-import littlesky.model.option.Options;
-import littlesky.view.option.OptionsWindow;
+import littlesky.model.clock.Clock;
 import littlesky.model.clock.RealTimeClock;
+import littlesky.model.moon.MoonPhase;
+import littlesky.model.option.Options;
+import littlesky.model.option.ViewOptions;
 import littlesky.model.sky.SkyColor;
+import littlesky.model.weather.Weather;
+import littlesky.model.weather.owm.OpenWeatherMap;
+import littlesky.view.debug.DebugDialog;
+import littlesky.view.main.BackgroundSkyViewModel;
 import littlesky.view.main.SkyStatusIconViewModel;
 import littlesky.view.main.TemperatureViewModel;
 import littlesky.view.main.TimeLabelViewModel;
-import littlesky.model.weather.Weather;
-import littlesky.model.clock.Clock;
+import littlesky.view.main.WindowSizeViewModel;
+import littlesky.view.option.OptionsWindow;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -44,9 +47,17 @@ public class MainController implements Initializable {
     @FXML
     private CheckMenuItem alwaysOnTopMenuItem;
     @FXML
+    private CheckMenuItem showSecondsCheckMenuItem;
+    @FXML
+    private CheckMenuItem showTemperatureCheckMenuItem;
+    @FXML
+    private CheckMenuItem showSkyStatusIconCheckMenuItem;
+    @FXML
     private Label timeLabel;
     @FXML
     private HBox backgroundSkyHBox;
+    @FXML
+    private BorderPane skyStatusIconPane;
     @FXML
     private ImageView skyStatusIconImageView;
     @FXML
@@ -75,7 +86,11 @@ public class MainController implements Initializable {
     }
     
     private void initMenuItems() {
-        this.alwaysOnTopMenuItem.setSelected(this.options.isAlwaysOnTop());
+        ViewOptions viewOptions = this.options.getViewOptions();
+        this.alwaysOnTopMenuItem.selectedProperty().bindBidirectional(viewOptions.alwaysOnTopProperty());
+        this.showSecondsCheckMenuItem.selectedProperty().bindBidirectional(viewOptions.showSecondsProperty());
+        this.showTemperatureCheckMenuItem.selectedProperty().bindBidirectional(viewOptions.showTemperatureProperty());
+        this.showSkyStatusIconCheckMenuItem.selectedProperty().bindBidirectional(viewOptions.showSkyStatusIconProperty());
 
         BooleanBinding enableStartWeatherService
                 = this.openWeatherMap.runningProperty().not()
@@ -103,23 +118,34 @@ public class MainController implements Initializable {
         SkyColor skyColor = new SkyColor(this.options.getUserLocation(), newClock, weather);
 
         TimeLabelViewModel timeLabelViewModel = new TimeLabelViewModel();
-        timeLabelViewModel.bind(newClock, skyColor);
+        timeLabelViewModel.bind(newClock, skyColor, this.options.getViewOptions());
         this.timeLabel.textProperty().bind(timeLabelViewModel.textProperty());
         this.timeLabel.textFillProperty().bind(timeLabelViewModel.colorProperty());
 
         BackgroundSkyViewModel backgroundSkyViewModel = new BackgroundSkyViewModel();
         backgroundSkyViewModel.bind(skyColor);
         this.backgroundSkyHBox.backgroundProperty().bind(backgroundSkyViewModel.backgroundProperty());
+
+        WindowSizeViewModel windowSizeViewModel = new WindowSizeViewModel();
+        windowSizeViewModel.bind(this.options.getViewOptions());
+        this.backgroundSkyHBox.prefWidthProperty().bind(windowSizeViewModel.widthProperty());
+        windowSizeViewModel.widthProperty().addListener((a, b, width) -> {
+            this.primaryStage.setWidth(width.doubleValue());
+        });
         
         this.moonPhase.bind(newClock.dateProperty());
 
         SkyStatusIconViewModel skyStatusIconViewModel = new SkyStatusIconViewModel();
         skyStatusIconViewModel.bind(this.moonPhase, weather);
         this.skyStatusIconImageView.imageProperty().bind(skyStatusIconViewModel.imageProperty());
+        this.skyStatusIconPane.visibleProperty().bind(this.showSkyStatusIconCheckMenuItem.selectedProperty());
+        this.skyStatusIconPane.managedProperty().bind(this.skyStatusIconPane.visibleProperty());
 
         TemperatureViewModel temperatureViewModel = new TemperatureViewModel();
         temperatureViewModel.bind(weather);
         this.temperaturePane.backgroundProperty().bind(temperatureViewModel.backgroundProperty());
+        this.temperaturePane.visibleProperty().bind(this.showTemperatureCheckMenuItem.selectedProperty());
+        this.temperaturePane.managedProperty().bind(this.temperaturePane.visibleProperty());
     }
     
     @FXML
@@ -155,7 +181,11 @@ public class MainController implements Initializable {
     @FXML
     public void changeAlwaysOnTop() {
         this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
-        this.options.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+        this.options.save();
+    }
+    
+    @FXML
+    public void changeViewOptions() {
         this.options.save();
     }
     

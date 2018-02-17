@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.paint.Color;
 import littlesky.model.clock.Clock;
+import littlesky.model.option.ViewOptions;
 import littlesky.model.sky.SkyColor;
 
 import java.time.LocalTime;
@@ -15,13 +16,14 @@ import static littlesky.util.BindingBuilder.*;
 
 public class TimeLabelViewModel {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final DateTimeFormatter formatterWithoutSeconds = DateTimeFormatter.ofPattern("HH:mm");
     private final ReadOnlyStringWrapper text = new ReadOnlyStringWrapper("00:00:00");
     private final ReadOnlyObjectWrapper<Color> color = new ReadOnlyObjectWrapper<>(Color.BLACK);
     
-    public void bind(Clock clock, SkyColor skyColor) {
+    public void bind(Clock clock, SkyColor skyColor, ViewOptions viewOptions) {
         this.text.bind(
-            binding(clock.timeProperty())
-            .computeValue(() -> this.formatClockTime(clock))
+            binding(clock.timeProperty(), viewOptions.showSecondsProperty())
+            .computeValue(() -> this.formatClockTime(clock, viewOptions))
         );
         
         this.color.bind(
@@ -30,9 +32,9 @@ public class TimeLabelViewModel {
         );
     }
     
-    private String formatClockTime(Clock clock) {
+    private String formatClockTime(Clock clock, ViewOptions viewOptions) {
         LocalTime time = clock.getTime();
-        return time.format(formatter);
+        return time.format(viewOptions.isShowSeconds() ? formatter : formatterWithoutSeconds);
     }
     
     private Color decideTimeFontColor(double skyBrightness) {
