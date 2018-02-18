@@ -121,4 +121,8 @@ You can show or hide the sky status icon.
 Default is true.
 
 # OSS
-This application uses the [Sunrise/SunsetLib - Java](https://github.com/mikereedell/sunrisesunsetlib-java) licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+This application uses some OSS.
+
+## [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+- [mikereedell/sunrisesunsetlib-java: Library for computing the sunrise/sunset from GPS coordinates and a date, in Java.](https://github.com/mikereedell/sunrisesunsetlib-java)
+- [FasterXML/jackson-databind: General data-binding package for Jackson (2.x): works on streaming API (core) implementation(s)](https://github.com/FasterXML/jackson-databind)
