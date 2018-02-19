@@ -45,14 +45,14 @@ The location setting is used at calculating sunset/surise times and requesting w
 The main window has three elements.
 
 1. Sky Icon
-    - Moon phase is shown if weather is sunny.
+    - This element displays the moon phase if weather is sunny.
     - Or else, rainy or snowy icon is shown.
 1. Time
-    - Current time is shown.
+    - Current time.
 1. Temperature
-    - Current temperature is shown.
-    - Temperature is displaied as color.
-    - blue (colder), while (normal), red (hotter)
+    - Current temperature.
+    - Temperature is displayed as color.
+    - blue (colder), white (normal), red (hotter)
 
 ## Context menu
 ![context-menu](https://camo.qiitausercontent.com/d28b82f2dcb44d00434a4ee080d176f4ec081dc8/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e616d617a6f6e6177732e636f6d2f302f32383330322f35363534346264642d633737662d383637382d616166622d6339633364343461666561312e6a706567)
