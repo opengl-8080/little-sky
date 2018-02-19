@@ -164,6 +164,10 @@ public class MainController implements Initializable {
         this.primaryStage = primaryStage;
         this.debugDialog.initOwner(primaryStage);
         this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+        this.skyStatusIconImageView.imageProperty().addListener((v, o, image) -> {
+            this.primaryStage.getIcons().clear();
+            this.primaryStage.getIcons().add(image);
+        });
     }
     
     @FXML
