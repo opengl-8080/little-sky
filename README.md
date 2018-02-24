@@ -126,3 +126,10 @@ This application uses some OSS.
 ## [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 - [mikereedell/sunrisesunsetlib-java: Library for computing the sunrise/sunset from GPS coordinates and a date, in Java.](https://github.com/mikereedell/sunrisesunsetlib-java)
 - [FasterXML/jackson-databind: General data-binding package for Jackson (2.x): works on streaming API (core) implementation(s)](https://github.com/FasterXML/jackson-databind)
+
+# Release Notes
+- v1.1.0
+    - Support task tray [#1](https://github.com/opengl-8080/little-sky/issues/1)
+    - Synchronize task bar icon and sky icon [#2](https://github.com/opengl-8080/little-sky/issues/2)
+- v1.0.0
+    - First Release
