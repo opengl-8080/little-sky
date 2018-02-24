@@ -1,7 +1,6 @@
 package littlesky.model.clock;
 
 import javafx.application.Platform;
-import littlesky.model.clock.ClockBase;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;

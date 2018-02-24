@@ -2,11 +2,14 @@ package littlesky.controller.main;
 
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -33,9 +36,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
-    private Stage primaryStage;
+    private Stage ownStage;
     private double mouseOffsetX;
     private double mouseOffsetY;
+    
+    private ReadOnlyObjectWrapper<Image> icon = new ReadOnlyObjectWrapper<>();
     
     private OptionsWindow optionsWindow;
     private DebugDialog debugDialog;
@@ -130,7 +135,7 @@ public class MainController implements Initializable {
         windowSizeViewModel.bind(this.options.getViewOptions());
         this.backgroundSkyHBox.prefWidthProperty().bind(windowSizeViewModel.widthProperty());
         windowSizeViewModel.widthProperty().addListener((a, b, width) -> {
-            this.primaryStage.setWidth(width.doubleValue());
+            this.ownStage.setWidth(width.doubleValue());
         });
         
         this.moonPhase.bind(newClock.dateProperty());
@@ -150,24 +155,31 @@ public class MainController implements Initializable {
     
     @FXML
     public void onMousePressed(MouseEvent event) {
-        this.mouseOffsetX = this.primaryStage.getX() - event.getScreenX();
-        this.mouseOffsetY = this.primaryStage.getY() - event.getScreenY();
+        this.mouseOffsetX = this.ownStage.getX() - event.getScreenX();
+        this.mouseOffsetY = this.ownStage.getY() - event.getScreenY();
     }
     
     @FXML
     public void onMouseDragged(MouseEvent event) {
-        this.primaryStage.setX(event.getScreenX() + this.mouseOffsetX);
-        this.primaryStage.setY(event.getScreenY() + this.mouseOffsetY);
+        this.ownStage.setX(event.getScreenX() + this.mouseOffsetX);
+        this.ownStage.setY(event.getScreenY() + this.mouseOffsetY);
     }
 
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        this.debugDialog.initOwner(primaryStage);
-        this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+    public void setOwnStage(Stage ownStage) {
+        this.ownStage = ownStage;
+        this.ownStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+        
+        this.debugDialog.initOwner(ownStage);
         this.skyStatusIconImageView.imageProperty().addListener((v, o, image) -> {
-            this.primaryStage.getIcons().clear();
-            this.primaryStage.getIcons().add(image);
+            this.ownStage.getIcons().clear();
+            this.ownStage.getIcons().add(image);
+            this.icon.set(image);
         });
+        this.icon.set(this.skyStatusIconImageView.imageProperty().get());
+    }
+    
+    public ReadOnlyObjectProperty<Image> iconProperty() {
+        return this.icon.getReadOnlyProperty();
     }
     
     @FXML
@@ -184,7 +196,7 @@ public class MainController implements Initializable {
     
     @FXML
     public void changeAlwaysOnTop() {
-        this.primaryStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
+        this.ownStage.setAlwaysOnTop(this.alwaysOnTopMenuItem.isSelected());
         this.options.save();
     }
     
@@ -195,7 +207,7 @@ public class MainController implements Initializable {
     
     @FXML
     public void openOptions() {
-        this.optionsWindow.open(this.primaryStage);
+        this.optionsWindow.open(this.ownStage);
     }
 
     @FXML
@@ -206,5 +218,9 @@ public class MainController implements Initializable {
     @FXML
     public void stopWeatherService() {
         this.openWeatherMap.stop();
+    }
+
+    public void show() {
+        this.ownStage.toFront();
     }
 }
