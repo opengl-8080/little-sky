@@ -6,6 +6,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import littlesky.model.sky.SkyColor;
 
 import static littlesky.util.BindingBuilder.*;
@@ -18,7 +19,7 @@ public class BackgroundSkyViewModel {
     public void bind(SkyColor skyColor) {
         this.background.bind(
             binding(skyColor.colorProperty())
-            .computeValue(() -> background(skyColor.getColor()))
+            .computeValue(() -> background(skyColor.getLinearGradient()))
         );
     }
     
@@ -26,8 +27,8 @@ public class BackgroundSkyViewModel {
         return this.background.getReadOnlyProperty();
     }
 
-    private Background background(Color color) {
-        BackgroundFill fill = new BackgroundFill(color, WINDOW_CORNER_RADII, null);
+    private Background background(Paint paint) {
+        BackgroundFill fill = new BackgroundFill(paint, WINDOW_CORNER_RADII, null);
         return new Background(fill);
     }
 }

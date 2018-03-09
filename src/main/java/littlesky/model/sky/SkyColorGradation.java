@@ -1,6 +1,7 @@
 package littlesky.model.sky;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -15,6 +16,23 @@ public class SkyColorGradation {
         this.frames.add(new KeyFrame(time, color));
         return this;
     }
+    
+//    public LinearGradient linearGradientAt(LocalTime time) {
+//        Color before10MinutesColor = this.at(time.minusMinutes(30));
+//        Color after10MinutesColor = this.at(time.plusMinutes(30));
+//        Color topColor;
+//        Color bottomColor;
+//        
+//        if (time.isBefore(LocalTime.NOON)) {
+//            topColor = before10MinutesColor;
+//            bottomColor = after10MinutesColor;
+//        } else {
+//            topColor = after10MinutesColor;
+//            bottomColor = before10MinutesColor;
+//        }
+//        
+//        return LinearGradient.valueOf(topColor + ", " + bottomColor);
+//    }
     
     public Color at(LocalTime time) {
         if (this.frames.isEmpty()) {
