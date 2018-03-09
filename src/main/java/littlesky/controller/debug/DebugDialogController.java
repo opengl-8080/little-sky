@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.util.StringConverter;
 import littlesky.model.weather.debug.DebugWeather;
 import littlesky.model.option.Options;
@@ -125,7 +126,7 @@ public class DebugDialogController implements Initializable {
         while (time.equals(LocalTime.MAX) || time.isBefore(LocalTime.MAX)) {
             simulationClock.update(time);
 
-            Pane pane = this.createSimulatedColorBlock(skyColor.getColor());
+            Pane pane = this.createSimulatedColorBlock(skyColor.getLinearGradient());
             this.skyColorSimulationHBox.getChildren().add(pane);
 
             time = time.plusMinutes(10);
@@ -135,7 +136,7 @@ public class DebugDialogController implements Initializable {
         }
     }
     
-    private Pane createSimulatedColorBlock(Color color) {
+    private Pane createSimulatedColorBlock(Paint color) {
         Pane pane = new Pane();
         HBox.setHgrow(pane, Priority.ALWAYS);
         pane.setBackground(new Background(new BackgroundFill(color, null, null)));

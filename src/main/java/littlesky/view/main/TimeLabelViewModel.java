@@ -38,12 +38,10 @@ public class TimeLabelViewModel {
     }
     
     private Color decideTimeFontColor(double skyBrightness) {
-        if (skyBrightness < 0.4) {
+        if (skyBrightness < 0.5) {
             return Color.WHITE;
-        } else if (0.4 <= skyBrightness && skyBrightness < 0.6) {
+        } else if (0.5 <= skyBrightness && skyBrightness < 0.7) {
             return Color.LIGHTGRAY;
-        } else if (0.6 <= skyBrightness && skyBrightness < 0.7) {
-            return Color.web("#333");
         } else {
             return Color.BLACK;
         }
